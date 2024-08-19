@@ -1,15 +1,13 @@
 package com.github.jaksa97.LeafSaver_Kotlin.services
 
+import com.github.jaksa97.LeafSaver_Kotlin.exceptions.ErrorInfo
+import com.github.jaksa97.LeafSaver_Kotlin.exceptions.ResourceNotFoundException
+import com.github.jaksa97.LeafSaver_Kotlin.exceptions.UniqueViolationException
 import com.github.jaksa97.LeafSaver_Kotlin.models.dtos.producer.ProducerDto
 import com.github.jaksa97.LeafSaver_Kotlin.models.dtos.producer.ProducerSaveDto
-import com.github.jaksa97.LeafSaver_Kotlin.models.dtos.producer.ProducerSearchOptions
 import com.github.jaksa97.LeafSaver_Kotlin.models.mappers.ProducerMapper
 import com.github.jaksa97.LeafSaver_Kotlin.repositories.ProducerRepository
-import com.github.jaksa97.LeafSaver_Kotlin.repositories.search_specification.ProducerSearchSpecification
 import lombok.RequiredArgsConstructor
-import org.antlr.v4.runtime.atn.ErrorInfo
-import org.springframework.data.domain.Page
-import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
 
 
@@ -20,8 +18,11 @@ class ProducerService(
     private val _producerMapper: ProducerMapper
 ) {
 
-    fun getOne(id: Int): ProducerDto {
-        val producerEntity = _producerRepository.findById(id).orElseThrow()
+    @Throws(ResourceNotFoundException::class)
+    fun getOne(id: Int): ProducerDto{
+        val producerEntity = _producerRepository.findById(id).orElseThrow {
+            ResourceNotFoundException(ErrorInfo.ResourceType.PRODUCER)
+        }
 
         return _producerMapper.toDto(producerEntity)
     }
@@ -46,19 +47,22 @@ class ProducerService(
         return _producerRepository.findAll().map(_producerMapper::toDto)
     }
 
+    @Throws(UniqueViolationException::class)
     fun save(producerSaveDto: ProducerSaveDto): ProducerDto {
         if (_producerRepository.findByName(producerSaveDto.name).isPresent) {
-            throw Exception()
+            throw UniqueViolationException(ErrorInfo.ResourceType.PRODUCER, "'name' already exists")
         }
-
         return _producerMapper.toDto(_producerRepository.save(_producerMapper.toEntity(producerSaveDto)))
     }
 
+    @Throws(ResourceNotFoundException::class, UniqueViolationException::class)
     fun update(id: Int, updateProducer: ProducerSaveDto): ProducerDto {
-        val originalProducerEntity = _producerRepository.findById(id).orElseThrow()
+        val originalProducerEntity = _producerRepository.findById(id).orElseThrow {
+            ResourceNotFoundException(ErrorInfo.ResourceType.PRODUCER)
+        }
 
         if (originalProducerEntity.name != updateProducer.name && _producerRepository.findByName(updateProducer.name).isPresent) {
-            throw Exception()
+            throw UniqueViolationException(ErrorInfo.ResourceType.PRODUCER, "'name' already exists")
         }
 
         val producerEntity = _producerMapper.toEntity(updateProducer)
@@ -69,9 +73,10 @@ class ProducerService(
         return _producerMapper.toDto(producerEntity)
     }
 
+    @Throws(ResourceNotFoundException::class)
     fun remove(id: Int) {
         if (!_producerRepository.existsById(id)) {
-            throw Exception()
+            throw ResourceNotFoundException(ErrorInfo.ResourceType.PRODUCER)
         }
 
         _producerRepository.deleteById(id)

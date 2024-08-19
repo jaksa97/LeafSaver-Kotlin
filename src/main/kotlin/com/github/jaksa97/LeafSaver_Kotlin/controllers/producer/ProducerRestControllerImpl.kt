@@ -1,5 +1,7 @@
 package com.github.jaksa97.LeafSaver_Kotlin.controllers.producer
 
+import com.github.jaksa97.LeafSaver_Kotlin.exceptions.ResourceNotFoundException
+import com.github.jaksa97.LeafSaver_Kotlin.exceptions.UniqueViolationException
 import com.github.jaksa97.LeafSaver_Kotlin.models.dtos.producer.ProducerDto
 import com.github.jaksa97.LeafSaver_Kotlin.models.dtos.producer.ProducerSaveDto
 import com.github.jaksa97.LeafSaver_Kotlin.models.dtos.producer.ProducerSearchOptions
@@ -24,18 +26,22 @@ class ProducerRestControllerImpl(
         return _producerService.getAll()
     }
 
+    @Throws(ResourceNotFoundException::class)
     override fun getProducerById(id: Int): ProducerDto {
         return _producerService.getOne(id)
     }
 
+    @Throws(UniqueViolationException::class)
     override fun saveProducer(producerSaveDto: ProducerSaveDto): ProducerDto {
         return _producerService.save(producerSaveDto)
     }
 
+    @Throws(ResourceNotFoundException::class, UniqueViolationException::class)
     override fun updateProducer(id: Int, producerSaveDto: ProducerSaveDto): ProducerDto {
         return _producerService.update(id, producerSaveDto)
     }
 
+    @Throws(ResourceNotFoundException::class)
     override fun deleteProducer(id: Int) {
         _producerService.remove(id)
     }
