@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "producer")
 data class ProducerEntity(
 
     @Id

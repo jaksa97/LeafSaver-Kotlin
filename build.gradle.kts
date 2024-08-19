@@ -42,6 +42,8 @@ dependencies {
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 	implementation("org.mapstruct:mapstruct:1.6.0")
 	kapt("org.mapstruct:mapstruct-processor:1.6.0")
+	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0")
+
 }
 
 kotlin {

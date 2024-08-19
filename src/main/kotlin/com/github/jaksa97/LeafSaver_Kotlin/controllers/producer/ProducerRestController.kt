@@ -2,18 +2,10 @@ package com.github.jaksa97.LeafSaver_Kotlin.controllers.producer
 
 import com.github.jaksa97.LeafSaver_Kotlin.models.dtos.producer.ProducerDto
 import com.github.jaksa97.LeafSaver_Kotlin.models.dtos.producer.ProducerSaveDto
-import com.github.jaksa97.LeafSaver_Kotlin.models.dtos.producer.ProducerSearchOptions
-import org.springframework.data.domain.Page
-import org.springframework.http.HttpStatus
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.responses.ApiResponse
 import org.springframework.http.MediaType
-import org.springframework.web.bind.annotation.DeleteMapping
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.PutMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.ResponseStatus
+import org.springframework.web.bind.annotation.*
 
 @RequestMapping(path = ["/producers"], produces = [MediaType.APPLICATION_JSON_VALUE])
 interface ProducerRestController {
@@ -22,19 +14,27 @@ interface ProducerRestController {
 //    fun getProducers(producerSearchOptions: ProducerSearchOptions?): Page<ProducerDto>
 
     @GetMapping
+    @Operation(summary = "Get ll producers", description = "Returns a list of all producers")
+    @ApiResponse(responseCode = "200", description = "Successful operation")
     fun getProducers(): List<ProducerDto>
 
     @GetMapping("/{id}")
+    @Operation(summary = "Get a producer by ID", description = "Returns a single producer")
+    @ApiResponse(responseCode = "200", description = "Successful operation")
     fun getProducerById(@PathVariable id: Int): ProducerDto
 
-
     @PostMapping
+    @Operation(summary = "Create a new producer", description = "Creates a new producer")
+    @ApiResponse(responseCode = "201", description = "Producer created successfully")
     fun saveProducer(@RequestBody producerSaveDto: ProducerSaveDto): ProducerDto
 
     @PutMapping("/{id}")
+    @Operation(summary = "Update a producer with ID", description = "Update an existing producer")
+    @ApiResponse(responseCode = "200", description = "Producer updated successfully")
     fun updateProducer(@PathVariable id: Int, @RequestBody producerSaveDto: ProducerSaveDto): ProducerDto
 
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(summary = "Delete a producer with ID", description = "Deletes an existing producer")
+    @ApiResponse(responseCode = "204", description = "Producer deleted successfully")
     fun deleteProducer(@PathVariable id: Int)
 }
