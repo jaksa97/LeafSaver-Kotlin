@@ -12,5 +12,5 @@ interface ProducerMapper {
 
     fun toEntity(producerDto: ProducerDto): ProducerEntity
 
-    fun toEntity(producerSaveDto: ProducerSaveDto): ProducerSaveDto
+    fun toEntity(producerSaveDto: ProducerSaveDto): ProducerEntity
 }

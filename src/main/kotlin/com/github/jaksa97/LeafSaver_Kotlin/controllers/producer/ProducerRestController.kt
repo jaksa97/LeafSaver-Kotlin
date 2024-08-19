@@ -2,6 +2,7 @@ package com.github.jaksa97.LeafSaver_Kotlin.controllers.producer
 
 import com.github.jaksa97.LeafSaver_Kotlin.models.dtos.producer.ProducerDto
 import com.github.jaksa97.LeafSaver_Kotlin.models.dtos.producer.ProducerSaveDto
+import com.github.jaksa97.LeafSaver_Kotlin.models.dtos.producer.ProducerSearchOptions
 import org.springframework.data.domain.Page
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -17,8 +18,11 @@ import org.springframework.web.bind.annotation.ResponseStatus
 @RequestMapping(path = ["/producers"], produces = [MediaType.APPLICATION_JSON_VALUE])
 interface ProducerRestController {
 
+//    @GetMapping
+//    fun getProducers(producerSearchOptions: ProducerSearchOptions?): Page<ProducerDto>
+
     @GetMapping
-    fun getProducers(): Page<ProducerDto>
+    fun getProducers(): List<ProducerDto>
 
     @GetMapping("/{id}")
     fun getProducerById(@PathVariable id: Int): ProducerDto
