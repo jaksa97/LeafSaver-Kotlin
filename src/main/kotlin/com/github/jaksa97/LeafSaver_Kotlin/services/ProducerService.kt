@@ -19,7 +19,7 @@ class ProducerService(
 ) {
 
     @Throws(ResourceNotFoundException::class)
-    fun getOne(id: Int): ProducerDto{
+    fun getOne(id: Int): ProducerDto {
         val producerEntity = _producerRepository.findById(id).orElseThrow {
             ResourceNotFoundException(ErrorInfo.ResourceType.PRODUCER)
         }
@@ -43,15 +43,14 @@ class ProducerService(
 //        return _producerRepository.findAll(ProducerSearchSpecification(producerSearchOptions), PageRequest.of(page, pageSize)).map(_producerMapper::toDto)
 //    }
 
-    fun getAll(): List<ProducerDto> {
-        return _producerRepository.findAll().map(_producerMapper::toDto)
-    }
+    fun getAll(): List<ProducerDto> = _producerRepository.findAll().map(_producerMapper::toDto)
 
     @Throws(UniqueViolationException::class)
     fun save(producerSaveDto: ProducerSaveDto): ProducerDto {
         if (_producerRepository.findByName(producerSaveDto.name).isPresent) {
             throw UniqueViolationException(ErrorInfo.ResourceType.PRODUCER, "'name' already exists")
         }
+
         return _producerMapper.toDto(_producerRepository.save(_producerMapper.toEntity(producerSaveDto)))
     }
 
