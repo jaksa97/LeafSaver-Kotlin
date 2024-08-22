@@ -6,8 +6,10 @@ import com.github.jaksa97.LeafSaver_Kotlin.exceptions.UniqueViolationException
 import com.github.jaksa97.LeafSaver_Kotlin.models.dtos.drug.DrugDto
 import com.github.jaksa97.LeafSaver_Kotlin.models.dtos.drug.DrugSaveDto
 import com.github.jaksa97.LeafSaver_Kotlin.models.mappers.DrugMapper
+import com.github.jaksa97.LeafSaver_Kotlin.repositories.CureRepository
 import com.github.jaksa97.LeafSaver_Kotlin.repositories.DrugRepository
 import com.github.jaksa97.LeafSaver_Kotlin.repositories.ProducerRepository
+import jakarta.transaction.Transactional
 import lombok.RequiredArgsConstructor
 import org.springframework.stereotype.Service
 
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Service
 class DrugService(
     private val _drugRepository: DrugRepository,
     private val _producerRepository: ProducerRepository,
+    private val _cureRepository: CureRepository,
     private val _drugMapper: DrugMapper
 ) {
 
@@ -83,11 +86,14 @@ class DrugService(
         return _drugMapper.toDto(drugEntity)
     }
 
+    @Transactional
     @Throws(ResourceNotFoundException::class)
     fun remove(id: Int) {
-        if (!_drugRepository.existsById(id)) {
-            throw ResourceNotFoundException(ErrorInfo.ResourceType.DRUG)
+        val drugEntity = _drugRepository.findById(id).orElseThrow {
+            ResourceNotFoundException(ErrorInfo.ResourceType.DRUG)
         }
+
+        _cureRepository.deleteAllByDrug(drugEntity)
 
         _drugRepository.deleteById(id)
     }

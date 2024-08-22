@@ -49,7 +49,7 @@ class CureService(
             throw ResourceNotFoundException(ErrorInfo.ResourceType.DISEASE)
         }
 
-        return _cureRepository.findAllByDrugId(diseaseId).map(_cureMapper::toDto)
+        return _cureRepository.findAllByDiseaseId(diseaseId).map(_cureMapper::toDto)
     }
 
     @Throws(ResourceNotFoundException::class, UniqueViolationException::class)
