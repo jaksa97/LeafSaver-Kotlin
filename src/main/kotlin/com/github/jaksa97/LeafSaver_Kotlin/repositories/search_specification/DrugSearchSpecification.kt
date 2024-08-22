@@ -1,34 +1,33 @@
 package com.github.jaksa97.LeafSaver_Kotlin.repositories.search_specification
 
+import com.github.jaksa97.LeafSaver_Kotlin.models.dtos.drug.DrugSearchOptions
 import com.github.jaksa97.LeafSaver_Kotlin.models.dtos.producer.ProducerSearchOptions
-import com.github.jaksa97.LeafSaver_Kotlin.models.entities.ProducerEntity
+import com.github.jaksa97.LeafSaver_Kotlin.models.entities.DrugEntity
+import com.github.jaksa97.LeafSaver_Kotlin.models.entities.DrugEntity_
 import com.github.jaksa97.LeafSaver_Kotlin.models.entities.ProducerEntity_
 import jakarta.persistence.criteria.*
 import lombok.RequiredArgsConstructor
 import org.springframework.data.jpa.domain.Specification
-import org.springframework.lang.Nullable
-
 
 @RequiredArgsConstructor
-class ProducerSearchSpecification(
-    private val producerSearchOptions: ProducerSearchOptions
-) : Specification<ProducerEntity> {
-
+class DrugSearchSpecification(
+    private val drugSearchOptions: DrugSearchOptions
+): Specification<DrugEntity> {
     override fun toPredicate(
-        root: Root<ProducerEntity>,
-        @Nullable query: CriteriaQuery<*>?,
+        root: Root<DrugEntity>,
+        query: CriteriaQuery<*>?,
         criteriaBuilder: CriteriaBuilder
     ): Predicate? {
         val predicates = mutableListOf<Predicate>()
 
-        val name: Path<String> = root.get(ProducerEntity_.name)
+        val name: Path<String> = root.get(DrugEntity_.name)
 
-        producerSearchOptions.sortBy.let {
+        drugSearchOptions.sortBy.let {
             val propertyToSortBy = when (it) {
-                ProducerSearchOptions.SortByField.NAME -> name
+                DrugSearchOptions.SortByField.NAME -> name
             }
 
-            val direction = producerSearchOptions.sortDirection
+            val direction = drugSearchOptions.sortDirection
             if (direction.isAscending) {
                 query?.orderBy(criteriaBuilder.asc(propertyToSortBy))
             } else {
@@ -36,7 +35,7 @@ class ProducerSearchSpecification(
             }
         }
 
-        producerSearchOptions.name.let {
+        drugSearchOptions.name.let {
             predicates.add(
                 criteriaBuilder.like(
                     criteriaBuilder.lower(name),

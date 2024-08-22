@@ -31,7 +31,6 @@ interface ProducerRestController {
     @Operation(summary = "Create a new producer", description = "Creates a new producer")
     @ApiResponse(responseCode = "201", description = "Producer created successfully")
     @ApiResponse(responseCode = "400", description = "Producer already exists")
-    @ApiResponse(responseCode = "404", description = "Producer not found")
     @Throws(UniqueViolationException::class)
     fun saveProducer(@RequestBody producerSaveDto: ProducerSaveDto): ProducerDto
 
