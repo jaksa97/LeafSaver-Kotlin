@@ -15,8 +15,8 @@ data class DiseaseSearchOptions(
     val pageSize: Int,
     val sortBy: SortByField,
     val sortDirection: Sort.Direction,
-    val name: String,
-    val niceName: String
+    val name: String? = null,
+    val niceName: String? = null
 ) {
     enum class SortByField {
         NAME,

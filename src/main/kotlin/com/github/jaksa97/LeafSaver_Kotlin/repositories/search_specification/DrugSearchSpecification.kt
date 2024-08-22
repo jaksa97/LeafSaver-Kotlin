@@ -13,6 +13,7 @@ import org.springframework.data.jpa.domain.Specification
 class DrugSearchSpecification(
     private val drugSearchOptions: DrugSearchOptions
 ): Specification<DrugEntity> {
+
     override fun toPredicate(
         root: Root<DrugEntity>,
         query: CriteriaQuery<*>?,
