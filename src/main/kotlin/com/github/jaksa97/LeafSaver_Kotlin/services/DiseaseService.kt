@@ -53,7 +53,7 @@ class DiseaseService(
 
         return _diseaseMapper.toDto(diseaseEntity)
     }
-    
+
     @Throws(ResourceNotFoundException::class)
     fun remove(id: Int) {
         if (!_diseaseRepository.existsById(id)) {

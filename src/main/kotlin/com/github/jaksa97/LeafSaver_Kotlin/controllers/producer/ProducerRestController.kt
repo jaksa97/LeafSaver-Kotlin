@@ -16,7 +16,7 @@ interface ProducerRestController {
 //    fun getProducers(producerSearchOptions: ProducerSearchOptions?): Page<ProducerDto>
 
     @GetMapping
-    @Operation(summary = "Get ll producers", description = "Returns a list of all producers")
+    @Operation(summary = "Get all producers", description = "Returns a list of all producers")
     @ApiResponse(responseCode = "200", description = "Successful operation")
     fun getProducers(): List<ProducerDto>
 
