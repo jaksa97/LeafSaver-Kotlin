@@ -6,7 +6,9 @@ import com.github.jaksa97.LeafSaver_Kotlin.exceptions.UniqueViolationException
 import com.github.jaksa97.LeafSaver_Kotlin.models.dtos.disease.DiseaseDto
 import com.github.jaksa97.LeafSaver_Kotlin.models.dtos.disease.DiseaseSaveDto
 import com.github.jaksa97.LeafSaver_Kotlin.models.mappers.DiseaseMapper
+import com.github.jaksa97.LeafSaver_Kotlin.repositories.CureRepository
 import com.github.jaksa97.LeafSaver_Kotlin.repositories.DiseaseRepository
+import jakarta.transaction.Transactional
 import lombok.RequiredArgsConstructor
 import org.springframework.stereotype.Service
 
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Service
 @RequiredArgsConstructor
 class DiseaseService(
     private val _diseaseRepository: DiseaseRepository,
+    private val _cureRepository: CureRepository,
     private val _diseaseMapper: DiseaseMapper
 ) {
     @Throws(ResourceNotFoundException::class)
@@ -54,11 +57,15 @@ class DiseaseService(
         return _diseaseMapper.toDto(diseaseEntity)
     }
 
+    @Transactional
     @Throws(ResourceNotFoundException::class)
     fun remove(id: Int) {
-        if (!_diseaseRepository.existsById(id)) {
-            throw ResourceNotFoundException(ErrorInfo.ResourceType.DISEASE)
+
+        val diseaseEntity = _diseaseRepository.findById(id).orElseThrow {
+            ResourceNotFoundException(ErrorInfo.ResourceType.DISEASE)
         }
+
+        _cureRepository.deleteAllByDisease(diseaseEntity)
 
         _diseaseRepository.deleteById(id)
     }

@@ -4,6 +4,7 @@ import com.github.jaksa97.LeafSaver_Kotlin.exceptions.ResourceNotFoundException
 import com.github.jaksa97.LeafSaver_Kotlin.exceptions.UniqueViolationException
 import com.github.jaksa97.LeafSaver_Kotlin.models.dtos.drug.DrugDto
 import com.github.jaksa97.LeafSaver_Kotlin.models.dtos.drug.DrugSaveDto
+import com.github.jaksa97.LeafSaver_Kotlin.services.CureService
 import com.github.jaksa97.LeafSaver_Kotlin.services.DrugService
 import io.swagger.v3.oas.annotations.tags.Tag
 import lombok.RequiredArgsConstructor
