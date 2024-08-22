@@ -6,7 +6,9 @@ import com.github.jaksa97.LeafSaver_Kotlin.exceptions.UniqueViolationException
 import com.github.jaksa97.LeafSaver_Kotlin.models.dtos.producer.ProducerDto
 import com.github.jaksa97.LeafSaver_Kotlin.models.dtos.producer.ProducerSaveDto
 import com.github.jaksa97.LeafSaver_Kotlin.models.mappers.ProducerMapper
+import com.github.jaksa97.LeafSaver_Kotlin.repositories.DrugRepository
 import com.github.jaksa97.LeafSaver_Kotlin.repositories.ProducerRepository
+import jakarta.transaction.Transactional
 import lombok.RequiredArgsConstructor
 import org.springframework.stereotype.Service
 
@@ -15,7 +17,8 @@ import org.springframework.stereotype.Service
 @RequiredArgsConstructor
 class ProducerService(
     private val _producerRepository: ProducerRepository,
-    private val _producerMapper: ProducerMapper
+    private val _producerMapper: ProducerMapper,
+    private val _drugRepository: DrugRepository
 ) {
 
     @Throws(ResourceNotFoundException::class)
@@ -72,11 +75,14 @@ class ProducerService(
         return _producerMapper.toDto(producerEntity)
     }
 
+    @Transactional
     @Throws(ResourceNotFoundException::class)
     fun remove(id: Int) {
-        if (!_producerRepository.existsById(id)) {
-            throw ResourceNotFoundException(ErrorInfo.ResourceType.PRODUCER)
+        val producerEntity = _producerRepository.findById(id).orElseThrow {
+            ResourceNotFoundException(ErrorInfo.ResourceType.PRODUCER)
         }
+
+        _drugRepository.deleteAllByProducer(producerEntity)
 
         _producerRepository.deleteById(id)
     }

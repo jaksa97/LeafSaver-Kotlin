@@ -16,7 +16,7 @@ interface ProducerRestController {
 //    fun getProducers(producerSearchOptions: ProducerSearchOptions?): Page<ProducerDto>
 
     @GetMapping
-    @Operation(summary = "Get ll producers", description = "Returns a list of all producers")
+    @Operation(summary = "Get all producers", description = "Returns a list of all producers")
     @ApiResponse(responseCode = "200", description = "Successful operation")
     fun getProducers(): List<ProducerDto>
 
@@ -44,7 +44,7 @@ interface ProducerRestController {
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete a producer with ID", description = "Deletes an existing producer")
-    @ApiResponse(responseCode = "204", description = "Producer deleted successfully")
+    @ApiResponse(responseCode = "200", description = "Producer deleted successfully")
     @ApiResponse(responseCode = "404", description = "Producer not found")
     @Throws(ResourceNotFoundException::class)
     fun deleteProducer(@PathVariable id: Int)

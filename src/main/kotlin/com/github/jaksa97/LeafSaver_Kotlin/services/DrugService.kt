@@ -18,6 +18,7 @@ class DrugService(
     private val _producerRepository: ProducerRepository,
     private val _drugMapper: DrugMapper
 ) {
+
     @Throws(ResourceNotFoundException::class)
     fun getOne(id: Int): DrugDto {
         val drugEntity = _drugRepository.findById(id).orElseThrow {

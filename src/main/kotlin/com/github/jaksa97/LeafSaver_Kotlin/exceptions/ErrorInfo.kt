@@ -19,6 +19,7 @@ data class ErrorInfo(
 
     enum class ResourceType {
         PRODUCER,
-        DRUG
+        DRUG,
+        DISEASE
     }
 }
