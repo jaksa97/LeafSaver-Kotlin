@@ -50,7 +50,7 @@ interface DrugRestController {
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete a producer with ID", description = "Deletes an existing producer")
-    @ApiResponse(responseCode = "204", description = "Drug deleted successfully")
+    @ApiResponse(responseCode = "200", description = "Drug deleted successfully")
     @ApiResponse(responseCode = "404", description = "Drug not found")
     @Throws(ResourceNotFoundException::class)
     fun removeDrug(@PathVariable id: Int)

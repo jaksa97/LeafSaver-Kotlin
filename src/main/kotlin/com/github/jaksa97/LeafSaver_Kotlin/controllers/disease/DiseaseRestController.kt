@@ -41,7 +41,7 @@ interface DiseaseRestController {
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete a disease with ID", description = "Deletes an existing disease")
-    @ApiResponse(responseCode = "204", description = "Disease deleted successfully")
+    @ApiResponse(responseCode = "200", description = "Disease deleted successfully")
     @ApiResponse(responseCode = "404", description = "Disease not found")
     @Throws(ResourceNotFoundException::class)
     fun deleteDisease(@PathVariable id: Int)
