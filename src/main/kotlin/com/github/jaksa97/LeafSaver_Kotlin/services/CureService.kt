@@ -11,6 +11,8 @@ import com.github.jaksa97.LeafSaver_Kotlin.repositories.CureRepository
 import com.github.jaksa97.LeafSaver_Kotlin.repositories.DiseaseRepository
 import com.github.jaksa97.LeafSaver_Kotlin.repositories.DrugRepository
 import lombok.RequiredArgsConstructor
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 
 
@@ -24,7 +26,9 @@ class CureService(
 ) {
 
     @Throws(ResourceNotFoundException::class)
-    fun getOne(id: Int): CureDto {
+    fun getOne(
+        id: Int
+    ): CureDto {
         val cureEntity = _cureRepository.findById(id).orElseThrow {
             ResourceNotFoundException(ErrorInfo.ResourceType.CURE)
         }
@@ -32,10 +36,12 @@ class CureService(
         return _cureMapper.toDto(cureEntity)
     }
 
-    fun getAll(): List<CureDto> = _cureRepository.findAll().map(_cureMapper::toDto)
+    fun getAll(pageable: Pageable): Page<CureDto> = _cureRepository.findAll(pageable).map(_cureMapper::toDto)
 
     @Throws(ResourceNotFoundException::class)
-    fun getAllByDrugId(drugId: Int): List<CureDto> {
+    fun getAllByDrugId(
+        drugId: Int
+    ): List<CureDto> {
         if (!_drugRepository.existsById(drugId)) {
             throw ResourceNotFoundException(ErrorInfo.ResourceType.DRUG)
         }
@@ -44,7 +50,9 @@ class CureService(
     }
 
     @Throws(ResourceNotFoundException::class)
-    fun getAllByDiseaseId(diseaseId: Int): List<CureDto> {
+    fun getAllByDiseaseId(
+        diseaseId: Int
+    ): List<CureDto> {
         if (!_diseaseRepository.existsById(diseaseId)) {
             throw ResourceNotFoundException(ErrorInfo.ResourceType.DISEASE)
         }
@@ -53,7 +61,9 @@ class CureService(
     }
 
     @Throws(ResourceNotFoundException::class, UniqueViolationException::class)
-    fun save(cureSaveDto: CureSaveDto): CureDto {
+    fun save(
+        cureSaveDto: CureSaveDto
+    ): CureDto {
         val drugEntity = _drugRepository.findById(cureSaveDto.drugId).orElseThrow {
                 ResourceNotFoundException(ErrorInfo.ResourceType.DRUG, ("Drug with id ${cureSaveDto.drugId} don't exist"))
             }
@@ -74,7 +84,10 @@ class CureService(
     }
 
     @Throws(ResourceNotFoundException::class, UniqueViolationException::class)
-    fun update(id: Int, updatedCure: CureSaveDto): CureDto {
+    fun update(
+        id: Int,
+        updatedCure: CureSaveDto
+    ): CureDto {
 
         val originalCureEntity = _cureRepository.findById(id).orElseThrow {
             ResourceNotFoundException(ErrorInfo.ResourceType.CURE)
@@ -103,7 +116,9 @@ class CureService(
     }
 
     @Throws(ResourceNotFoundException::class)
-    fun remove(id: Int) {
+    fun remove(
+        id: Int
+    ) {
         if (!_cureRepository.existsById(id)) {
             throw ResourceNotFoundException(ErrorInfo.ResourceType.CURE)
         }
@@ -111,7 +126,9 @@ class CureService(
         _cureRepository.deleteById(id)
     }
 
-    private fun checkCure(cureSaveDto: CureSaveDto): Boolean {
+    private fun checkCure(
+        cureSaveDto: CureSaveDto
+    ): Boolean {
         val cureEntitiesByDrugId = _cureRepository.findAllByDrugId(cureSaveDto.drugId)
 
         if (cureEntitiesByDrugId.isNotEmpty()) {

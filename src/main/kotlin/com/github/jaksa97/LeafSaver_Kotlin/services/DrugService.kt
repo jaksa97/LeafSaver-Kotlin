@@ -11,6 +11,8 @@ import com.github.jaksa97.LeafSaver_Kotlin.repositories.DrugRepository
 import com.github.jaksa97.LeafSaver_Kotlin.repositories.ProducerRepository
 import jakarta.transaction.Transactional
 import lombok.RequiredArgsConstructor
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 
 @Service
@@ -23,7 +25,9 @@ class DrugService(
 ) {
 
     @Throws(ResourceNotFoundException::class)
-    fun getOne(id: Int): DrugDto {
+    fun getOne(
+        id: Int
+    ): DrugDto {
         val drugEntity = _drugRepository.findById(id).orElseThrow {
             ResourceNotFoundException(ErrorInfo.ResourceType.DRUG)
         }
@@ -32,7 +36,9 @@ class DrugService(
     }
 
     @Throws(ResourceNotFoundException::class)
-    fun getAllByProducerId(producerId: Int): List<DrugDto> {
+    fun getAllByProducerId(
+        producerId: Int
+    ): List<DrugDto> {
         if (!_producerRepository.existsById(producerId)) {
             throw ResourceNotFoundException(ErrorInfo.ResourceType.PRODUCER, "Producer with id $producerId don't exist")
         }
@@ -40,10 +46,12 @@ class DrugService(
         return _drugRepository.findAllByProducerId(producerId).map(_drugMapper::toDto)
     }
 
-    fun getAll(): List<DrugDto> = _drugRepository.findAll().map(_drugMapper::toDto)
+    fun getAll(pageable: Pageable): Page<DrugDto> = _drugRepository.findAll(pageable).map(_drugMapper::toDto)
 
     @Throws(UniqueViolationException::class, ResourceNotFoundException::class)
-    fun save(drugSaveDto: DrugSaveDto): DrugDto {
+    fun save(
+        drugSaveDto: DrugSaveDto
+    ): DrugDto {
         if (_drugRepository.findByName(drugSaveDto.name).isPresent) {
             throw UniqueViolationException(ErrorInfo.ResourceType.DRUG, "'name' already exists")
         }
@@ -63,7 +71,10 @@ class DrugService(
     }
 
     @Throws(UniqueViolationException::class, ResourceNotFoundException::class)
-    fun update(id: Int, updateDrug: DrugSaveDto): DrugDto {
+    fun update(
+        id: Int,
+        updateDrug: DrugSaveDto
+    ): DrugDto {
         val originalDrugEntity = _drugRepository.findById(id).orElseThrow {
             ResourceNotFoundException(ErrorInfo.ResourceType.DRUG)
         }
@@ -88,7 +99,9 @@ class DrugService(
 
     @Transactional
     @Throws(ResourceNotFoundException::class)
-    fun remove(id: Int) {
+    fun remove(
+        id: Int
+    ) {
         val drugEntity = _drugRepository.findById(id).orElseThrow {
             ResourceNotFoundException(ErrorInfo.ResourceType.DRUG)
         }

@@ -5,7 +5,10 @@ import com.github.jaksa97.LeafSaver_Kotlin.exceptions.UniqueViolationException
 import com.github.jaksa97.LeafSaver_Kotlin.models.dtos.cure.CureDto
 import com.github.jaksa97.LeafSaver_Kotlin.models.dtos.cure.CureSaveDto
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.responses.ApiResponse
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Sort
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.*
 
@@ -15,7 +18,12 @@ interface CureRestController {
     @GetMapping
     @Operation(summary = "Get all cures", description = "Returns a list of all cures")
     @ApiResponse(responseCode = "200", description = "Successful operation")
-    fun getCures(): List<CureDto>
+    fun getCures(
+        @Parameter(description = "Enter the number of pages you want to retrieve") page: Int?,
+        @Parameter(description = "Enter the number of elements per page you want to retrieve") pageSize: Int?,
+        @Parameter(description = "Enter the exact name of the field you want to sort by") sortBy: String?,
+        sortDirection: Sort.Direction?
+    ): Page<CureDto>
 
     @GetMapping("/drug/{drugId}")
     @Operation(summary = "Get all cures for drug", description = "Returns a list of all cures for drug")
