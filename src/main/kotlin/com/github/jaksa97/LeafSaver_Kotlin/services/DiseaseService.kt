@@ -10,6 +10,8 @@ import com.github.jaksa97.LeafSaver_Kotlin.repositories.CureRepository
 import com.github.jaksa97.LeafSaver_Kotlin.repositories.DiseaseRepository
 import jakarta.transaction.Transactional
 import lombok.RequiredArgsConstructor
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 
 @Service
@@ -20,7 +22,9 @@ class DiseaseService(
     private val _diseaseMapper: DiseaseMapper
 ) {
     @Throws(ResourceNotFoundException::class)
-    fun getOne(id: Int): DiseaseDto {
+    fun getOne(
+        id: Int
+    ): DiseaseDto {
         val diseaseEntity = _diseaseRepository.findById(id).orElseThrow {
             ResourceNotFoundException(ErrorInfo.ResourceType.DISEASE)
         }
@@ -28,10 +32,12 @@ class DiseaseService(
         return _diseaseMapper.toDto(diseaseEntity)
     }
 
-    fun getAll(): List<DiseaseDto> = _diseaseRepository.findAll().map(_diseaseMapper::toDto)
+    fun getAll(pageable: Pageable): Page<DiseaseDto> = _diseaseRepository.findAll(pageable).map(_diseaseMapper::toDto)
 
     @Throws(UniqueViolationException::class)
-    fun save(diseaseSaveDto: DiseaseSaveDto): DiseaseDto {
+    fun save(
+        diseaseSaveDto: DiseaseSaveDto
+    ): DiseaseDto {
         if (_diseaseRepository.findByName(diseaseSaveDto.name).isPresent) {
             throw UniqueViolationException(ErrorInfo.ResourceType.DISEASE, "'name' already exists")
         }
@@ -40,7 +46,10 @@ class DiseaseService(
     }
 
     @Throws(ResourceNotFoundException::class, UniqueViolationException::class)
-    fun update(id: Int, updateDisease: DiseaseSaveDto): DiseaseDto {
+    fun update(
+        id: Int,
+        updateDisease: DiseaseSaveDto
+    ): DiseaseDto {
         val originalDiseaseEntity = _diseaseRepository.findById(id).orElseThrow {
             ResourceNotFoundException(ErrorInfo.ResourceType.DISEASE)
         }
@@ -59,7 +68,9 @@ class DiseaseService(
 
     @Transactional
     @Throws(ResourceNotFoundException::class)
-    fun remove(id: Int) {
+    fun remove(
+        id: Int
+    ) {
 
         val diseaseEntity = _diseaseRepository.findById(id).orElseThrow {
             ResourceNotFoundException(ErrorInfo.ResourceType.DISEASE)

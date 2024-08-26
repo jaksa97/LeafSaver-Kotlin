@@ -4,10 +4,12 @@ import com.github.jaksa97.LeafSaver_Kotlin.exceptions.ResourceNotFoundException
 import com.github.jaksa97.LeafSaver_Kotlin.exceptions.UniqueViolationException
 import com.github.jaksa97.LeafSaver_Kotlin.models.dtos.drug.DrugDto
 import com.github.jaksa97.LeafSaver_Kotlin.models.dtos.drug.DrugSaveDto
-import com.github.jaksa97.LeafSaver_Kotlin.services.CureService
 import com.github.jaksa97.LeafSaver_Kotlin.services.DrugService
+import com.github.jaksa97.LeafSaver_Kotlin.utils.PageableCreator
 import io.swagger.v3.oas.annotations.tags.Tag
 import lombok.RequiredArgsConstructor
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Sort
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
@@ -17,8 +19,13 @@ class DrugRestControllerImpl(
     private val _drugService: DrugService
 ): DrugRestController {
 
-    override fun getDrugs(): List<DrugDto> {
-        return _drugService.getAll()
+    override fun getDrugs(
+        page: Int?,
+        pageSize: Int?,
+        sortBy: String?,
+        sortDirection: Sort.Direction?
+    ): Page<DrugDto> {
+        return _drugService.getAll(PageableCreator.createPageable(page, pageSize, sortBy, sortDirection))
     }
 
     @Throws(ResourceNotFoundException::class)

@@ -5,8 +5,11 @@ import com.github.jaksa97.LeafSaver_Kotlin.exceptions.UniqueViolationException
 import com.github.jaksa97.LeafSaver_Kotlin.models.dtos.disease.DiseaseDto
 import com.github.jaksa97.LeafSaver_Kotlin.models.dtos.disease.DiseaseSaveDto
 import com.github.jaksa97.LeafSaver_Kotlin.services.DiseaseService
+import com.github.jaksa97.LeafSaver_Kotlin.utils.PageableCreator
 import io.swagger.v3.oas.annotations.tags.Tag
 import lombok.RequiredArgsConstructor
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Sort
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
@@ -16,27 +19,41 @@ class DiseaseRestControllerImpl(
     private val _diseaseService: DiseaseService
 ): DiseaseRestController {
 
-    override fun getDiseases(): List<DiseaseDto> {
-        return _diseaseService.getAll()
+    override fun getDiseases(
+        page: Int?,
+        pageSize: Int?,
+        sortBy: String?,
+        sortDirection: Sort.Direction?
+    ): Page<DiseaseDto> {
+        return _diseaseService.getAll(PageableCreator.createPageable(page, pageSize, sortBy, sortDirection))
     }
 
     @Throws(ResourceNotFoundException::class)
-    override fun getDiseaseById(id: Int): DiseaseDto {
+    override fun getDiseaseById(
+        id: Int
+    ): DiseaseDto {
         return _diseaseService.getOne(id)
     }
 
     @Throws(UniqueViolationException::class)
-    override fun saveDisease(diseaseSaveDto: DiseaseSaveDto): DiseaseDto {
+    override fun saveDisease(
+        diseaseSaveDto: DiseaseSaveDto
+    ): DiseaseDto {
         return _diseaseService.save(diseaseSaveDto)
     }
 
     @Throws(ResourceNotFoundException::class, UniqueViolationException::class)
-    override fun updateDisease(id: Int, updateDisease: DiseaseSaveDto): DiseaseDto {
+    override fun updateDisease(
+        id: Int,
+        updateDisease: DiseaseSaveDto
+    ): DiseaseDto {
         return _diseaseService.update(id, updateDisease)
     }
 
     @Throws(ResourceNotFoundException::class)
-    override fun deleteDisease(id: Int) {
+    override fun deleteDisease(
+        id: Int
+    ) {
         _diseaseService.remove(id)
     }
 }

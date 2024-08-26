@@ -5,7 +5,10 @@ import com.github.jaksa97.LeafSaver_Kotlin.exceptions.UniqueViolationException
 import com.github.jaksa97.LeafSaver_Kotlin.models.dtos.drug.DrugDto
 import com.github.jaksa97.LeafSaver_Kotlin.models.dtos.drug.DrugSaveDto
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.responses.ApiResponse
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Sort
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.*
 
@@ -15,7 +18,12 @@ interface DrugRestController {
     @GetMapping
     @Operation(summary = "Get all drugs", description = "Returns a list of all drugs")
     @ApiResponse(responseCode = "200", description = "Successful operation")
-    fun getDrugs(): List<DrugDto>
+    fun getDrugs(
+        @Parameter(description = "Enter the number of pages you want to retrieve") page: Int?,
+        @Parameter(description = "Enter the number of elements per page you want to retrieve") pageSize: Int?,
+        @Parameter(description = "Enter the exact name of the field you want to sort by") sortBy: String?,
+        sortDirection: Sort.Direction?
+    ): Page<DrugDto>
 
     @GetMapping("/producer/{producerId}")
     @Operation(summary = "Get all drugs for producer", description = "Returns a list of all drugs for producer")
