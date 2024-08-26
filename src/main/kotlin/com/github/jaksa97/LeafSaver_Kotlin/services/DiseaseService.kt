@@ -32,7 +32,7 @@ class DiseaseService(
         return _diseaseMapper.toDto(diseaseEntity)
     }
 
-    fun getAll(pageable: Pageable): Page<DiseaseDto> = _diseaseRepository.findAll(pageable).map(_diseaseMapper::toDto)
+    fun getAll(name: String?, pageable: Pageable): Page<DiseaseDto> = _diseaseRepository.findAll(name, pageable).map(_diseaseMapper::toDto)
 
     @Throws(UniqueViolationException::class)
     fun save(

@@ -20,12 +20,13 @@ class DiseaseRestControllerImpl(
 ): DiseaseRestController {
 
     override fun getDiseases(
+        search: String?,
         page: Int?,
         pageSize: Int?,
         sortBy: String?,
         sortDirection: Sort.Direction?
     ): Page<DiseaseDto> {
-        return _diseaseService.getAll(PageableCreator.createPageable(page, pageSize, sortBy, sortDirection))
+        return _diseaseService.getAll(search, PageableCreator.createPageable(page, pageSize, sortBy, sortDirection))
     }
 
     @Throws(ResourceNotFoundException::class)
