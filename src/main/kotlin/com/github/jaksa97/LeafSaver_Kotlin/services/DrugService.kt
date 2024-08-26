@@ -46,7 +46,7 @@ class DrugService(
         return _drugRepository.findAllByProducerId(producerId).map(_drugMapper::toDto)
     }
 
-    fun getAll(pageable: Pageable): Page<DrugDto> = _drugRepository.findAll(pageable).map(_drugMapper::toDto)
+    fun getAll(name: String?, pageable: Pageable): Page<DrugDto> = _drugRepository.findAll(name, pageable).map(_drugMapper::toDto)
 
     @Throws(UniqueViolationException::class, ResourceNotFoundException::class)
     fun save(
