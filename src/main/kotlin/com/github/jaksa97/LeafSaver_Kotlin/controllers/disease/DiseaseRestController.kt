@@ -19,6 +19,7 @@ interface DiseaseRestController {
     @Operation(summary = "Get all diseases", description = "Returns a list of all diseases")
     @ApiResponse(responseCode = "200", description = "Operation successfully")
     fun getDiseases(
+        @Parameter(description = "Enter the value you want to search by") search: String?,
         @Parameter(description = "Enter the number of pages you want to retrieve") page: Int?,
         @Parameter(description = "Enter the number of elements per page you want to retrieve") pageSize: Int?,
         @Parameter(description = "Enter the exact name of the field you want to sort by") sortBy: String?,

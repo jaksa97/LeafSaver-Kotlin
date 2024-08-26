@@ -19,6 +19,7 @@ interface ProducerRestController {
     @Operation(summary = "Get all producers", description = "Returns a list of all producers")
     @ApiResponse(responseCode = "200", description = "Successful operation")
     fun getProducers(
+        @Parameter(description = "Enter the value you want to search by") search: String?,
         @Parameter(description = "Enter the number of pages you want to retrieve") page: Int?,
         @Parameter(description = "Enter the number of elements per page you want to retrieve") pageSize: Int?,
         @Parameter(description = "Enter the exact name of the field you want to sort by") sortBy: String?,

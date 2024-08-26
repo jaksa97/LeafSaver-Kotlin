@@ -20,12 +20,13 @@ class DrugRestControllerImpl(
 ): DrugRestController {
 
     override fun getDrugs(
+        search: String?,
         page: Int?,
         pageSize: Int?,
         sortBy: String?,
         sortDirection: Sort.Direction?
     ): Page<DrugDto> {
-        return _drugService.getAll(PageableCreator.createPageable(page, pageSize, sortBy, sortDirection))
+        return _drugService.getAll(search, PageableCreator.createPageable(page, pageSize, sortBy, sortDirection))
     }
 
     @Throws(ResourceNotFoundException::class)
