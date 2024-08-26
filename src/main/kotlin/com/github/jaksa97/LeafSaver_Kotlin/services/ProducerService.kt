@@ -34,9 +34,7 @@ class ProducerService(
         return _producerMapper.toDto(producerEntity)
     }
 
-    fun getAll(pageable: PageRequest): Page<ProducerDto> = _producerRepository.findAll(pageable).map(_producerMapper::toDto)
-
-//    fun getAll(): List<ProducerDto> = _producerRepository.findAll().map(_producerMapper::toDto)
+    fun getAll(name: String?, pageable: PageRequest): Page<ProducerDto> = _producerRepository.findAll(name, pageable).map(_producerMapper::toDto)
 
     @Throws(UniqueViolationException::class)
     fun save(

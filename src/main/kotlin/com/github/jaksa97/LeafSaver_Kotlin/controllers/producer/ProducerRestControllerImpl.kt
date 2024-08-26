@@ -21,12 +21,13 @@ class ProducerRestControllerImpl(
 ) : ProducerRestController {
 
     override fun getProducers(
+        search: String?,
         page: Int?,
         pageSize: Int?,
         sortBy: String?,
         sortDirection: Sort.Direction?
     ): Page<ProducerDto> {
-        return _producerService.getAll(PageableCreator.createPageable(page, pageSize, sortBy, sortDirection))
+        return _producerService.getAll(search, PageableCreator.createPageable(page, pageSize, sortBy, sortDirection))
     }
 
     @Throws(ResourceNotFoundException::class)
