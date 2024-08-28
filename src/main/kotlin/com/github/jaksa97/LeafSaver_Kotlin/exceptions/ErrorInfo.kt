@@ -21,6 +21,7 @@ data class ErrorInfo(
         PRODUCER,
         DRUG,
         DISEASE,
-        CURE
+        CURE,
+        USER
     }
 }
