@@ -5,6 +5,7 @@ import com.github.jaksa97.LeafSaver_Kotlin.exceptions.ResourceNotFoundException
 import com.github.jaksa97.LeafSaver_Kotlin.exceptions.UniqueViolationException
 import com.github.jaksa97.LeafSaver_Kotlin.models.dtos.user.UserDto
 import com.github.jaksa97.LeafSaver_Kotlin.models.dtos.user.UserSaveDto
+import com.github.jaksa97.LeafSaver_Kotlin.models.enumClasses.UserRoles
 import com.github.jaksa97.LeafSaver_Kotlin.models.mappers.UserMapper
 import com.github.jaksa97.LeafSaver_Kotlin.repositories.UserRepository
 import lombok.RequiredArgsConstructor
@@ -35,6 +36,8 @@ class UserService(
     fun getAllByFirstName(firstName: String): List<UserDto> = _userRepository.findAllByFirstName(firstName).map(_userMapper::toDto)
 
     fun getAllByLastName(lastName: String): List<UserDto> = _userRepository.findAllByLastName(lastName).map(_userMapper::toDto)
+
+    fun getAllByRole(role: UserRoles): List<UserDto> = _userRepository.findAllByRole(role).map(_userMapper::toDto)
 
     @Throws(ResourceNotFoundException::class)
     fun getByEmail(

@@ -4,6 +4,7 @@ import com.github.jaksa97.LeafSaver_Kotlin.exceptions.ResourceNotFoundException
 import com.github.jaksa97.LeafSaver_Kotlin.exceptions.UniqueViolationException
 import com.github.jaksa97.LeafSaver_Kotlin.models.dtos.user.UserDto
 import com.github.jaksa97.LeafSaver_Kotlin.models.dtos.user.UserSaveDto
+import com.github.jaksa97.LeafSaver_Kotlin.models.enumClasses.UserRoles
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.responses.ApiResponse
@@ -32,22 +33,29 @@ interface UserRestController {
     @Throws(ResourceNotFoundException::class)
     fun getUserById(@PathVariable id: Int): UserDto
 
-    @GetMapping("/{email}")
+
+    //TODO: Refactor this method
+    @GetMapping("/email")
     @Operation(summary = "Get a user by email", description = "Returns a single user")
     @ApiResponse(responseCode = "200", description = "Successful operation")
     @ApiResponse(responseCode = "404", description = "User not found")
     @Throws(ResourceNotFoundException::class)
-    fun getUserByEmail(@PathVariable email: String): UserDto
+    fun getUserByEmail(@RequestParam email: String): UserDto
 
     @GetMapping("/firstName/{firstName}")
     @Operation(summary = "Get all users with first name", description = "Returns a list of all users with first name")
     @ApiResponse(responseCode = "200", description = "Successful operation")
-    fun getUserByFirstName(@PathVariable firstName: String): List<UserDto>
+    fun getUsersByFirstName(@PathVariable firstName: String): List<UserDto>
 
     @GetMapping("/lastName/{lastName}")
     @Operation(summary = "Get all users with last name", description = "Returns a list of all users with last name")
     @ApiResponse(responseCode = "200", description = "Successful operation")
-    fun getUserByLastName(@PathVariable lastName: String): List<UserDto>
+    fun getUsersByLastName(@PathVariable lastName: String): List<UserDto>
+
+    @GetMapping("/roles")
+    @Operation(summary = "Get all users with last name", description = "Returns a list of all users with last name")
+    @ApiResponse(responseCode = "200", description = "Successful operation")
+    fun getUsersByRole(@RequestBody role: UserRoles): List<UserDto>
 
     @PostMapping
     @Operation(summary = "Create a new user", description = "Create a new user")

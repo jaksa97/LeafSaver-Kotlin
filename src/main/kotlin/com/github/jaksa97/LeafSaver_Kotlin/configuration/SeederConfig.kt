@@ -1,13 +1,8 @@
 package com.github.jaksa97.LeafSaver_Kotlin.configuration
 
-import com.github.jaksa97.LeafSaver_Kotlin.models.entities.CureEntity
-import com.github.jaksa97.LeafSaver_Kotlin.models.entities.DiseaseEntity
-import com.github.jaksa97.LeafSaver_Kotlin.models.entities.DrugEntity
-import com.github.jaksa97.LeafSaver_Kotlin.models.entities.ProducerEntity
-import com.github.jaksa97.LeafSaver_Kotlin.repositories.CureRepository
-import com.github.jaksa97.LeafSaver_Kotlin.repositories.DiseaseRepository
-import com.github.jaksa97.LeafSaver_Kotlin.repositories.DrugRepository
-import com.github.jaksa97.LeafSaver_Kotlin.repositories.ProducerRepository
+import com.github.jaksa97.LeafSaver_Kotlin.models.entities.*
+import com.github.jaksa97.LeafSaver_Kotlin.models.enumClasses.UserRoles
+import com.github.jaksa97.LeafSaver_Kotlin.repositories.*
 import org.springframework.boot.ApplicationRunner
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -19,13 +14,15 @@ class SeederConfig(
     private val _producerRepository: ProducerRepository,
     private val _drugRepository: DrugRepository,
     private val _diseaseRepository: DiseaseRepository,
-    private val _cureRepository: CureRepository
+    private val _cureRepository: CureRepository,
+    private val _userRepository: UserRepository
 ) {
 
     val producers = mutableListOf<ProducerEntity>()
     val drugs = mutableListOf<DrugEntity>()
     val diseases = mutableListOf<DiseaseEntity>()
     val cures = mutableListOf<CureEntity>()
+    val users = mutableListOf<UserEntity>()
 
     @Bean
     fun databaseSeeder() = ApplicationRunner {
@@ -33,6 +30,7 @@ class SeederConfig(
         initDrugs()
         initDiseases()
         initCures()
+        initUsers()
     }
 
     private fun initProducers() {
@@ -93,6 +91,24 @@ class SeederConfig(
                 )
             }
             _cureRepository.saveAll(cures)
+        }
+    }
+
+    private fun initUsers() {
+        if (_userRepository.count() == 0L) {
+            for (i in 1..5) {
+                users.add(
+                    UserEntity(
+                        id = i,
+                        firstName = "FirstName $i",
+                        lastName = "LastName $i",
+                        email = "email$i@gmail.com",
+                        password = "Password$i",
+                        role = UserRoles.entries.shuffled().first()
+                    )
+                )
+            }
+            _userRepository.saveAll(users)
         }
     }
 }
