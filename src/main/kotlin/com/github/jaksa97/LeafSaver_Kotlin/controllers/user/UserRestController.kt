@@ -55,7 +55,7 @@ interface UserRestController {
     @GetMapping("/roles")
     @Operation(summary = "Get all users with last name", description = "Returns a list of all users with last name")
     @ApiResponse(responseCode = "200", description = "Successful operation")
-    fun getUsersByRole(@RequestBody role: UserRoles): List<UserDto>
+    fun getUsersByRole(@RequestParam role: UserRoles): List<UserDto>
 
     @PostMapping
     @Operation(summary = "Create a new user", description = "Create a new user")
