@@ -21,12 +21,14 @@ class UserRestControllerImpl(
 ): UserRestController {
 
     override fun getUsers(
+        firstName: String?,
+        lastName: String?,
         page: Int?,
         pageSize: Int?,
         sortBy: String?,
         sortDirection: Sort.Direction?
     ): Page<UserDto> {
-        return _userService.getAll(PageableCreator.createPageable(page, pageSize, sortBy, sortDirection))
+        return _userService.getAll(firstName, lastName, PageableCreator.createPageable(page, pageSize, sortBy, sortDirection))
     }
 
     @Throws(ResourceNotFoundException::class)
@@ -37,14 +39,6 @@ class UserRestControllerImpl(
     @Throws(ResourceNotFoundException::class)
     override fun getUserByEmail(email: String): UserDto {
         return _userService.getByEmail(email)
-    }
-
-    override fun getUsersByFirstName(firstName: String): List<UserDto> {
-        return _userService.getAllByFirstName(firstName)
-    }
-
-    override fun getUsersByLastName(lastName: String): List<UserDto> {
-        return _userService.getAllByLastName(lastName)
     }
 
     override fun getUsersByRole(role: UserRoles): List<UserDto> {

@@ -31,11 +31,7 @@ class UserService(
         return _userMapper.toDto(userEntity)
     }
 
-    fun getAll(pageable: Pageable): Page<UserDto> = _userRepository.findAll(pageable).map(_userMapper::toDto)
-
-    fun getAllByFirstName(firstName: String): List<UserDto> = _userRepository.findAllByFirstName(firstName).map(_userMapper::toDto)
-
-    fun getAllByLastName(lastName: String): List<UserDto> = _userRepository.findAllByLastName(lastName).map(_userMapper::toDto)
+    fun getAll(firstName: String?, lastName: String?, pageable: Pageable): Page<UserDto> = _userRepository.findAll(firstName, lastName, pageable).map(_userMapper::toDto)
 
     fun getAllByRole(role: UserRoles): List<UserDto> = _userRepository.findAllByRole(role).map(_userMapper::toDto)
 
