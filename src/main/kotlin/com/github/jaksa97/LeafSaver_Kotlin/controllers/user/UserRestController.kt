@@ -20,6 +20,8 @@ interface UserRestController {
     @Operation(summary = "Get all users", description = "Returns a list of all users")
     @ApiResponse(responseCode = "200", description = "Successful operation")
     fun getUsers(
+        @Parameter(description = "Enter the first name you want to search by") firstName: String?,
+        @Parameter(description = "Enter the last name you want to search by") lastName: String?,
         @Parameter(description = "Enter the number of pages you want to retrieve") page: Int?,
         @Parameter(description = "Enter the number of elements per page you want to retrieve") pageSize: Int?,
         @Parameter(description = "Enter the exact name of the field you want to sort by") sortBy: String?,
@@ -41,16 +43,6 @@ interface UserRestController {
     @ApiResponse(responseCode = "404", description = "User not found")
     @Throws(ResourceNotFoundException::class)
     fun getUserByEmail(@RequestParam email: String): UserDto
-
-    @GetMapping("/firstName/{firstName}")
-    @Operation(summary = "Get all users with first name", description = "Returns a list of all users with first name")
-    @ApiResponse(responseCode = "200", description = "Successful operation")
-    fun getUsersByFirstName(@PathVariable firstName: String): List<UserDto>
-
-    @GetMapping("/lastName/{lastName}")
-    @Operation(summary = "Get all users with last name", description = "Returns a list of all users with last name")
-    @ApiResponse(responseCode = "200", description = "Successful operation")
-    fun getUsersByLastName(@PathVariable lastName: String): List<UserDto>
 
     @GetMapping("/roles")
     @Operation(summary = "Get all users with last name", description = "Returns a list of all users with last name")
