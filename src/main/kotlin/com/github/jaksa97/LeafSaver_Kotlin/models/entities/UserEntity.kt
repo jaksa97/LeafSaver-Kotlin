@@ -5,6 +5,10 @@ import jakarta.persistence.*
 import lombok.AllArgsConstructor
 import lombok.Builder
 import lombok.NoArgsConstructor
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.security.core.GrantedAuthority
+import org.springframework.security.core.authority.SimpleGrantedAuthority
+import org.springframework.security.core.userdetails.UserDetails
 
 @Entity
 @Builder
@@ -13,6 +17,7 @@ import lombok.NoArgsConstructor
 @Table(name = "users")
 data class UserEntity(
     @Id
+    @Autowired
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Int,
 
@@ -26,8 +31,21 @@ data class UserEntity(
     val email: String,
 
     @Column(nullable = false)
-    val password: String,
+    private val password: String,
 
     @Column(nullable = false)
+    @Enumerated(value = EnumType.STRING)
     val role: UserRoles
-)
+): UserDetails {
+    override fun getAuthorities(): MutableCollection<out GrantedAuthority> {
+        return mutableListOf(SimpleGrantedAuthority(role.name))
+    }
+
+    override fun getPassword(): String {
+        return password
+    }
+
+    override fun getUsername(): String {
+        return email
+    }
+}
