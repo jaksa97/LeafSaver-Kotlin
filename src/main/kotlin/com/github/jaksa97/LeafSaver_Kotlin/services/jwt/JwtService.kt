@@ -1,6 +1,7 @@
 package com.github.jaksa97.LeafSaver_Kotlin.services.jwt
 
 import com.github.jaksa97.LeafSaver_Kotlin.models.entities.UserEntity
+import com.github.jaksa97.LeafSaver_Kotlin.repositories.TokenRepository
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.security.Keys
@@ -10,7 +11,9 @@ import java.util.*
 import java.util.function.Function
 
 @Service
-class JwtService {
+class JwtService(
+    private val _tokenRepository: TokenRepository
+) {
 
     private val secret = Keys.hmacShaKeyFor(System.getenv("JWT_KEY").toByteArray())
 
@@ -42,7 +45,9 @@ class JwtService {
     fun isValid(token: String, user: UserDetails): Boolean {
         val email = extractEmail(token)
 
-        return email == user.username && !isTokenExpired(token)
+        val isValidToken = _tokenRepository.findByToken(token).map { !it.loggedOut }.orElse(false)
+
+        return email == user.username && !isTokenExpired(token) && isValidToken
     }
 
     private fun isTokenExpired(token: String): Boolean {

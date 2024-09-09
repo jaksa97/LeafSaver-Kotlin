@@ -1,5 +1,6 @@
 package com.github.jaksa97.LeafSaver_Kotlin.models.entities
 
+import com.github.jaksa97.LeafSaver_Kotlin.models.auth.Token
 import com.github.jaksa97.LeafSaver_Kotlin.models.enumClasses.UserRoles
 import jakarta.persistence.*
 import lombok.AllArgsConstructor
@@ -35,7 +36,11 @@ data class UserEntity(
 
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
-    val role: UserRoles
+    val role: UserRoles,
+
+    @OneToMany(mappedBy = "user")
+    val tokens: List<Token> = emptyList()
+
 ): UserDetails {
     override fun getAuthorities(): MutableCollection<out GrantedAuthority> {
         return mutableListOf(SimpleGrantedAuthority(role.name))

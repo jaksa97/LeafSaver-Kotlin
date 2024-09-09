@@ -4,6 +4,8 @@ import com.github.jaksa97.LeafSaver_Kotlin.exceptions.ResourceNotFoundException
 import com.github.jaksa97.LeafSaver_Kotlin.models.auth.AuthResponse
 import com.github.jaksa97.LeafSaver_Kotlin.models.auth.LoginRequest
 import com.github.jaksa97.LeafSaver_Kotlin.models.auth.RegisterRequest
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -19,4 +21,7 @@ interface AuthController {
     @PostMapping("/login")
     @Throws(ResourceNotFoundException::class)
     fun login(@RequestBody loginRequest: LoginRequest): AuthResponse
+
+    @PostMapping("/logout")
+    fun logout(request: HttpServletRequest, response: HttpServletResponse)
 }

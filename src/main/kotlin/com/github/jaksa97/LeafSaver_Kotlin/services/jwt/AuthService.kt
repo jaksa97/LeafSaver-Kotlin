@@ -5,8 +5,11 @@ import com.github.jaksa97.LeafSaver_Kotlin.exceptions.ResourceNotFoundException
 import com.github.jaksa97.LeafSaver_Kotlin.models.auth.AuthResponse
 import com.github.jaksa97.LeafSaver_Kotlin.models.auth.LoginRequest
 import com.github.jaksa97.LeafSaver_Kotlin.models.auth.RegisterRequest
+import com.github.jaksa97.LeafSaver_Kotlin.models.auth.Token
 import com.github.jaksa97.LeafSaver_Kotlin.models.dtos.user.UserSaveDto
+import com.github.jaksa97.LeafSaver_Kotlin.models.entities.UserEntity
 import com.github.jaksa97.LeafSaver_Kotlin.models.mappers.UserMapper
+import com.github.jaksa97.LeafSaver_Kotlin.repositories.TokenRepository
 import com.github.jaksa97.LeafSaver_Kotlin.repositories.UserRepository
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
@@ -19,7 +22,8 @@ class AuthService(
     private val _userMapper: UserMapper,
     private val _passwordEncoder: PasswordEncoder,
     private val _jwtService: JwtService,
-    private val _authManager: AuthenticationManager
+    private val _authManager: AuthenticationManager,
+    private val _tokenRepository: TokenRepository
 ) {
 
     fun register(registerRequest: RegisterRequest): AuthResponse {
@@ -33,9 +37,11 @@ class AuthService(
 
         val user = _userRepository.save(_userMapper.toEntity(userToRegister))
 
-        val token = _jwtService.generateToken(user)
+        val jwt = _jwtService.generateToken(user)
 
-        return AuthResponse(token)
+        saveUserToken(jwt, user)
+
+        return AuthResponse(jwt)
     }
 
     @Throws(ResourceNotFoundException::class)
@@ -53,6 +59,32 @@ class AuthService(
 
         val token = _jwtService.generateToken(user)
 
+        revokeAllTokensByUser(user)
+
+        saveUserToken(token, user)
+
         return AuthResponse(token)
+    }
+
+    private fun saveUserToken(jwt: String, user: UserEntity) {
+        val token = Token(
+            token = jwt,
+            loggedOut = false,
+            user = user
+        )
+
+        _tokenRepository.save(token)
+    }
+
+    private fun revokeAllTokensByUser(user: UserEntity) {
+        val validTokenListByUser = _tokenRepository.findAllTokenByUser(user.id)
+
+        if (validTokenListByUser.isNotEmpty()) {
+            validTokenListByUser.forEach {
+                it.loggedOut = true
+            }
+        }
+
+        _tokenRepository.saveAll(validTokenListByUser)
     }
 }

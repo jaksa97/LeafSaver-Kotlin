@@ -6,6 +6,8 @@ import com.github.jaksa97.LeafSaver_Kotlin.models.auth.LoginRequest
 import com.github.jaksa97.LeafSaver_Kotlin.models.auth.RegisterRequest
 import com.github.jaksa97.LeafSaver_Kotlin.services.jwt.AuthService
 import io.swagger.v3.oas.annotations.tags.Tag
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
 import lombok.RequiredArgsConstructor
 import org.springframework.web.bind.annotation.RestController
 
@@ -22,6 +24,10 @@ class AuthControllerImpl(
     @Throws(ResourceNotFoundException::class)
     override fun login(loginRequest: LoginRequest): AuthResponse {
         return _authService.login(loginRequest)
+    }
+
+    override fun logout(request: HttpServletRequest, response: HttpServletResponse) {
+
     }
 
 }
