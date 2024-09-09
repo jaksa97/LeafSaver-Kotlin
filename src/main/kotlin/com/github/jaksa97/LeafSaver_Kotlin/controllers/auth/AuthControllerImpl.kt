@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import lombok.RequiredArgsConstructor
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
@@ -28,6 +29,10 @@ class AuthControllerImpl(
 
     override fun logout(request: HttpServletRequest, response: HttpServletResponse) {
 
+    }
+
+    override fun refreshToken(request: HttpServletRequest, response: HttpServletResponse): ResponseEntity<Any> {
+        return _authService.refreshToken(request, response)
     }
 
 }

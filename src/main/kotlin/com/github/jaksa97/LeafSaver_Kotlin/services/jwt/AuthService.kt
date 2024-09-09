@@ -11,6 +11,11 @@ import com.github.jaksa97.LeafSaver_Kotlin.models.entities.UserEntity
 import com.github.jaksa97.LeafSaver_Kotlin.models.mappers.UserMapper
 import com.github.jaksa97.LeafSaver_Kotlin.repositories.TokenRepository
 import com.github.jaksa97.LeafSaver_Kotlin.repositories.UserRepository
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
+import org.springframework.http.HttpHeaders
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -37,11 +42,12 @@ class AuthService(
 
         val user = _userRepository.save(_userMapper.toEntity(userToRegister))
 
-        val jwt = _jwtService.generateToken(user)
+        val accessToken = _jwtService.generateAccessToken(user)
+        val refreshToken = _jwtService.generateRefreshToken(user)
 
-        saveUserToken(jwt, user)
+        saveUserToken(accessToken, refreshToken, user)
 
-        return AuthResponse(jwt)
+        return AuthResponse(accessToken, refreshToken)
     }
 
     @Throws(ResourceNotFoundException::class)
@@ -57,18 +63,20 @@ class AuthService(
             ResourceNotFoundException(ErrorInfo.ResourceType.USER)
         }
 
-        val token = _jwtService.generateToken(user)
+        val accessToken = _jwtService.generateAccessToken(user)
+        val refreshToken = _jwtService.generateRefreshToken(user)
 
         revokeAllTokensByUser(user)
 
-        saveUserToken(token, user)
+        saveUserToken(accessToken, refreshToken, user)
 
-        return AuthResponse(token)
+        return AuthResponse(accessToken, refreshToken)
     }
 
-    private fun saveUserToken(jwt: String, user: UserEntity) {
+    private fun saveUserToken(accessToken: String, refreshToken: String, user: UserEntity) {
         val token = Token(
-            token = jwt,
+            accessToken = accessToken,
+            refreshToken = refreshToken,
             loggedOut = false,
             user = user
         )
@@ -77,7 +85,7 @@ class AuthService(
     }
 
     private fun revokeAllTokensByUser(user: UserEntity) {
-        val validTokenListByUser = _tokenRepository.findAllTokenByUser(user.id)
+        val validTokenListByUser = _tokenRepository.findAllAccessTokenByUser(user.id)
 
         if (validTokenListByUser.isNotEmpty()) {
             validTokenListByUser.forEach {
@@ -86,5 +94,37 @@ class AuthService(
         }
 
         _tokenRepository.saveAll(validTokenListByUser)
+    }
+
+
+    //Refactor to pass refreshToken as method parameter
+    @Throws(ResourceNotFoundException::class)
+    fun refreshToken(request: HttpServletRequest, response: HttpServletResponse): ResponseEntity<Any> {
+        val authHeader = request.getHeader(HttpHeaders.AUTHORIZATION)
+
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ResponseEntity(HttpStatus.UNAUTHORIZED)
+        }
+
+        val token = authHeader.substringAfter("Bearer ")
+
+        val email = _jwtService.extractEmail(token)
+
+        val user = _userRepository.findByEmail(email).orElseThrow {
+            ResourceNotFoundException(ErrorInfo.ResourceType.USER)
+        }
+
+        if (_jwtService.isRefreshValid(token, user)) {
+            val accessToken = _jwtService.generateAccessToken(user)
+            val refreshToken = _jwtService.generateRefreshToken(user)
+
+            revokeAllTokensByUser(user)
+
+            saveUserToken(accessToken, refreshToken, user)
+
+            return ResponseEntity(AuthResponse(accessToken, refreshToken), HttpStatus.OK)
+        }
+
+        return ResponseEntity(HttpStatus.UNAUTHORIZED)
     }
 }

@@ -16,3 +16,10 @@ spring:
   h2:
     console:
       enabled: true
+
+application:
+  security:
+    jwt:
+      key: ${JWT_KEY}
+      access-token-expiration: 86400000
+      refresh-token-expiration: 604800000

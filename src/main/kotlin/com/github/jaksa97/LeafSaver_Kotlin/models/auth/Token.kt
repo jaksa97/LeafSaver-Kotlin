@@ -11,7 +11,11 @@ data class Token(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Int = 0,
 
-    val token: String,
+    @Column(name = "access_token")
+    val accessToken: String,
+
+    @Column(name = "refresh_token")
+    val refreshToken: String,
 
     @Column(name = "is_logged_out")
     var loggedOut: Boolean,

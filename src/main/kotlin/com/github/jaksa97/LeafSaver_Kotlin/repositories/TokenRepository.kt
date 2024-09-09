@@ -9,7 +9,9 @@ import java.util.*
 interface TokenRepository: JpaRepository<Token, Int> {
 
     @Query(Queries.UserTokensQuery)
-    fun findAllTokenByUser(userId: Int): List<Token>
+    fun findAllAccessTokenByUser(userId: Int): List<Token>
 
-    fun findByToken(token: String): Optional<Token>
+    fun findByAccessToken(token: String): Optional<Token>
+
+    fun findByRefreshToken(token: String): Optional<Token>
 }

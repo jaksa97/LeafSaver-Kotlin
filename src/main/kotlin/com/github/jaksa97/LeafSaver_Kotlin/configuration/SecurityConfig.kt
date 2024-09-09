@@ -37,6 +37,7 @@ class SecurityConfig(
                 it.requestMatchers(
                     "/auth/login",
                     "/auth/register",
+                    "/auth/refreshToken",
                     "/swagger-ui/**",
                     "/api-docs/**",
                     "/h2-console/**")

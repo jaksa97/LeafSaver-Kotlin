@@ -7,6 +7,7 @@ import com.github.jaksa97.LeafSaver_Kotlin.models.auth.RegisterRequest
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.http.MediaType
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -24,4 +25,7 @@ interface AuthController {
 
     @PostMapping("/logout")
     fun logout(request: HttpServletRequest, response: HttpServletResponse)
+
+    @PostMapping("/refreshToken")
+    fun refreshToken(request: HttpServletRequest, response: HttpServletResponse): ResponseEntity<Any>
 }
