@@ -1,5 +1,6 @@
 package com.github.jaksa97.LeafSaver_Kotlin.controllers.disease
 
+import com.github.jaksa97.LeafSaver_Kotlin.exceptions.BadRequestException
 import com.github.jaksa97.LeafSaver_Kotlin.exceptions.ResourceNotFoundException
 import com.github.jaksa97.LeafSaver_Kotlin.exceptions.UniqueViolationException
 import com.github.jaksa97.LeafSaver_Kotlin.models.dtos.disease.DiseaseDto
@@ -36,7 +37,7 @@ class DiseaseRestControllerImpl(
         return _diseaseService.getOne(id)
     }
 
-    @Throws(UniqueViolationException::class)
+    @Throws(UniqueViolationException::class, BadRequestException::class)
     override fun saveDisease(
         diseaseSaveDto: DiseaseSaveDto
     ): DiseaseDto {

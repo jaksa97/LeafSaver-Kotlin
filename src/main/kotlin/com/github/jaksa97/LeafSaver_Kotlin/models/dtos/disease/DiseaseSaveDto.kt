@@ -6,6 +6,10 @@ import lombok.Value
 @Value
 @Builder
 data class DiseaseSaveDto(
-    var name: String,
-    var niceName: String
+    var name: String? = null,
+    var niceName: String? = null
 )
+
+fun DiseaseSaveDto.isPopulate(): Boolean {
+    return name != null && niceName != null
+}

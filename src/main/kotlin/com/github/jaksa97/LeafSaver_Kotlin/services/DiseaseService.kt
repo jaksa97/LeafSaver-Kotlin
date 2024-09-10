@@ -1,10 +1,12 @@
 package com.github.jaksa97.LeafSaver_Kotlin.services
 
+import com.github.jaksa97.LeafSaver_Kotlin.exceptions.BadRequestException
 import com.github.jaksa97.LeafSaver_Kotlin.exceptions.ErrorInfo
 import com.github.jaksa97.LeafSaver_Kotlin.exceptions.ResourceNotFoundException
 import com.github.jaksa97.LeafSaver_Kotlin.exceptions.UniqueViolationException
 import com.github.jaksa97.LeafSaver_Kotlin.models.dtos.disease.DiseaseDto
 import com.github.jaksa97.LeafSaver_Kotlin.models.dtos.disease.DiseaseSaveDto
+import com.github.jaksa97.LeafSaver_Kotlin.models.dtos.disease.isPopulate
 import com.github.jaksa97.LeafSaver_Kotlin.models.mappers.DiseaseMapper
 import com.github.jaksa97.LeafSaver_Kotlin.repositories.CureRepository
 import com.github.jaksa97.LeafSaver_Kotlin.repositories.DiseaseRepository
@@ -34,11 +36,16 @@ class DiseaseService(
 
     fun getAll(name: String?, pageable: Pageable): Page<DiseaseDto> = _diseaseRepository.findAll(name, pageable).map(_diseaseMapper::toDto)
 
-    @Throws(UniqueViolationException::class)
+    @Throws(UniqueViolationException::class, BadRequestException::class)
     fun save(
         diseaseSaveDto: DiseaseSaveDto
     ): DiseaseDto {
-        if (_diseaseRepository.findByName(diseaseSaveDto.name).isPresent) {
+
+        if (!diseaseSaveDto.isPopulate()) {
+            throw BadRequestException("All params all required")
+        }
+
+        if (_diseaseRepository.findByName(diseaseSaveDto.name!!).isPresent) {
             throw UniqueViolationException(ErrorInfo.ResourceType.DISEASE, "'name' already exists")
         }
 
@@ -54,16 +61,21 @@ class DiseaseService(
             ResourceNotFoundException(ErrorInfo.ResourceType.DISEASE)
         }
 
-        if (originalDiseaseEntity.name != updateDisease.name && _diseaseRepository.findByName(updateDisease.name).isPresent) {
-            throw UniqueViolationException(ErrorInfo.ResourceType.DISEASE, "'name' already exists")
+        updateDisease.name?.let {
+            if (originalDiseaseEntity.name != updateDisease.name && _diseaseRepository.findByName(it).isPresent) {
+                throw UniqueViolationException(ErrorInfo.ResourceType.DISEASE, "'name' already exists")
+            }
+
+            originalDiseaseEntity.name = it
         }
 
-        val diseaseEntity = _diseaseMapper.toEntity(updateDisease)
-        diseaseEntity.id = originalDiseaseEntity.id
+        updateDisease.niceName?.let {
+            originalDiseaseEntity.niceName = it
+        }
 
-        _diseaseRepository.save(diseaseEntity)
+        _diseaseRepository.save(originalDiseaseEntity)
 
-        return _diseaseMapper.toDto(diseaseEntity)
+        return _diseaseMapper.toDto(originalDiseaseEntity)
     }
 
     @Transactional
