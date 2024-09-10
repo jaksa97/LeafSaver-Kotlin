@@ -9,4 +9,6 @@ object Queries {
     const val DisaseNameSarchQuery = "SELECT d FROM DiseaseEntity d WHERE (:name IS NULL OR :name = '' OR LOWER(d.name) LIKE LOWER(CONCAT('%', :name, '%')))"
 
     const val UserSearchQuery = "SELECT u FROM UserEntity u WHERE (:firstName IS NULL OR :firstName = '' OR LOWER(u.firstName) LIKE LOWER(CONCAT('%', :firstName, '%'))) AND (:lastName IS NULL OR :lastName = '' OR LOWER(u.lastName) LIKE LOWER(CONCAT('%', :lastName, '%')))"
+
+    const val UserTokensQuery = "SELECT t FROM Token t inner join UserEntity u on t.user.id = u.id WHERE t.user.id = :userId AND t.loggedOut = false"
 }

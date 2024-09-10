@@ -6,6 +6,7 @@ import com.github.jaksa97.LeafSaver_Kotlin.repositories.*
 import org.springframework.boot.ApplicationRunner
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.security.crypto.password.PasswordEncoder
 import kotlin.random.Random
 
 
@@ -15,7 +16,8 @@ class SeederConfig(
     private val _drugRepository: DrugRepository,
     private val _diseaseRepository: DiseaseRepository,
     private val _cureRepository: CureRepository,
-    private val _userRepository: UserRepository
+    private val _userRepository: UserRepository,
+    private val _passwordEncoder: PasswordEncoder
 ) {
 
     val producers = mutableListOf<ProducerEntity>()
@@ -96,14 +98,26 @@ class SeederConfig(
 
     private fun initUsers() {
         if (_userRepository.count() == 0L) {
-            for (i in 1..5) {
+
+            users.add(
+                UserEntity(
+                    id = 1,
+                    firstName = "Veljko",
+                    lastName = "Jaksic",
+                    email = "jaksa97@gmail.com",
+                    password = _passwordEncoder.encode("password"),
+                    role = UserRoles.ADMIN
+                )
+            )
+
+            for (i in 2..5) {
                 users.add(
                     UserEntity(
                         id = i,
                         firstName = "FirstName $i",
                         lastName = "LastName $i",
                         email = "email$i@gmail.com",
-                        password = "Password$i",
+                        password = _passwordEncoder.encode("Password$i"),
                         role = UserRoles.entries.shuffled().first()
                     )
                 )

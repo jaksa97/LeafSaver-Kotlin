@@ -1,5 +1,25 @@
+server:
+  port: 8080
+
 springdoc:
   swagger-ui:
     path: /swagger-ui
   api-docs:
     path: /api-docs
+
+spring:
+  datasource:
+    url: jdbc:h2:mem:4f9386d3-5d03-4f46-b8ba-94b042a13acd
+    username: SA
+    password:
+    driver-class-name: org.h2.Driver
+  h2:
+    console:
+      enabled: true
+
+application:
+  security:
+    jwt:
+      key: ${JWT_KEY}
+      access-token-expiration: 86400000
+      refresh-token-expiration: 604800000
