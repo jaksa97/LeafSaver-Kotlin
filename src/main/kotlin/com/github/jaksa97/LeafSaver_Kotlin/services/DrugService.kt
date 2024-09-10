@@ -1,10 +1,12 @@
 package com.github.jaksa97.LeafSaver_Kotlin.services
 
+import com.github.jaksa97.LeafSaver_Kotlin.exceptions.BadRequestException
 import com.github.jaksa97.LeafSaver_Kotlin.exceptions.ErrorInfo
 import com.github.jaksa97.LeafSaver_Kotlin.exceptions.ResourceNotFoundException
 import com.github.jaksa97.LeafSaver_Kotlin.exceptions.UniqueViolationException
 import com.github.jaksa97.LeafSaver_Kotlin.models.dtos.drug.DrugDto
 import com.github.jaksa97.LeafSaver_Kotlin.models.dtos.drug.DrugSaveDto
+import com.github.jaksa97.LeafSaver_Kotlin.models.dtos.drug.isPopulate
 import com.github.jaksa97.LeafSaver_Kotlin.models.mappers.DrugMapper
 import com.github.jaksa97.LeafSaver_Kotlin.repositories.CureRepository
 import com.github.jaksa97.LeafSaver_Kotlin.repositories.DrugRepository
@@ -48,21 +50,22 @@ class DrugService(
 
     fun getAll(name: String?, pageable: Pageable): Page<DrugDto> = _drugRepository.findAll(name, pageable).map(_drugMapper::toDto)
 
-    @Throws(UniqueViolationException::class, ResourceNotFoundException::class)
+    @Throws(UniqueViolationException::class, ResourceNotFoundException::class, BadRequestException::class)
     fun save(
         drugSaveDto: DrugSaveDto
     ): DrugDto {
-        if (_drugRepository.findByName(drugSaveDto.name).isPresent) {
+
+        if (!drugSaveDto.isPopulate()) {
+            throw BadRequestException("All params all required")
+        }
+
+        if (_drugRepository.findByName(drugSaveDto.name!!).isPresent) {
             throw UniqueViolationException(ErrorInfo.ResourceType.DRUG, "'name' already exists")
         }
 
-        if (_producerRepository.existsById(drugSaveDto.producerId)) {
-            throw ResourceNotFoundException(ErrorInfo.ResourceType.PRODUCER, "Producer with id ${drugSaveDto.producerId} don't exist")
-        }
-
         val drugEntity = _drugMapper.toEntity(drugSaveDto)
-        val producerEntity = _producerRepository.findById(drugSaveDto.producerId).orElseThrow {
-            ResourceNotFoundException(ErrorInfo.ResourceType.PRODUCER)
+        val producerEntity = _producerRepository.findById(drugSaveDto.producerId!!).orElseThrow {
+            ResourceNotFoundException(ErrorInfo.ResourceType.PRODUCER, "Producer with id ${drugSaveDto.producerId} don't exist")
         }
 
         drugEntity.producer = producerEntity
@@ -79,22 +82,29 @@ class DrugService(
             ResourceNotFoundException(ErrorInfo.ResourceType.DRUG)
         }
 
-        if (originalDrugEntity.name != updateDrug.name && _drugRepository.findByName(updateDrug.name).isPresent) {
-            throw UniqueViolationException(ErrorInfo.ResourceType.DRUG, "'name' already exists")
+        updateDrug.name?.let {
+            if (originalDrugEntity.name != updateDrug.name && _drugRepository.findByName(it).isPresent) {
+                throw UniqueViolationException(ErrorInfo.ResourceType.DRUG, "'name' already exists")
+            }
+
+            originalDrugEntity.name = it
         }
 
-        val drugEntity = _drugMapper.toEntity(updateDrug)
-        val producerEntity = _producerRepository.findById(updateDrug.producerId).orElseThrow {
-            ResourceNotFoundException(ErrorInfo.ResourceType.PRODUCER)
+        updateDrug.producerId?.let {
+            val producerEntity = _producerRepository.findById(it).orElseThrow {
+                ResourceNotFoundException(ErrorInfo.ResourceType.PRODUCER)
+            }
+
+            originalDrugEntity.producer = producerEntity
         }
 
-        drugEntity.producer = producerEntity
+        updateDrug.description?.let {
+            originalDrugEntity.description = it
+        }
 
-        drugEntity.id = id
+        _drugRepository.save(originalDrugEntity)
 
-        _drugRepository.save(drugEntity)
-
-        return _drugMapper.toDto(drugEntity)
+        return _drugMapper.toDto(originalDrugEntity)
     }
 
     @Transactional

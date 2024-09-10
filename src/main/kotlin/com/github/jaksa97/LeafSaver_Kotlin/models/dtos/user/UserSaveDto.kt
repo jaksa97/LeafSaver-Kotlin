@@ -12,9 +12,8 @@ data class UserSaveDto(
     val email: String? = null,
     val password: String? = null,
     val role: UserRoles? = null
-) {
+)
 
-    fun isPopulate(): Boolean {
-        return firstName != null && lastName != null && email != null && password != null && role != null
-    }
+fun UserSaveDto.isPopulate(): Boolean {
+    return firstName != null && lastName != null && email != null && password != null && role != null
 }

@@ -6,6 +6,7 @@ import com.github.jaksa97.LeafSaver_Kotlin.exceptions.ResourceNotFoundException
 import com.github.jaksa97.LeafSaver_Kotlin.exceptions.UniqueViolationException
 import com.github.jaksa97.LeafSaver_Kotlin.models.dtos.user.UserDto
 import com.github.jaksa97.LeafSaver_Kotlin.models.dtos.user.UserSaveDto
+import com.github.jaksa97.LeafSaver_Kotlin.models.dtos.user.isPopulate
 import com.github.jaksa97.LeafSaver_Kotlin.models.enumClasses.UserRoles
 import com.github.jaksa97.LeafSaver_Kotlin.models.mappers.UserMapper
 import com.github.jaksa97.LeafSaver_Kotlin.repositories.UserRepository

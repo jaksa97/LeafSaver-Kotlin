@@ -1,5 +1,6 @@
 package com.github.jaksa97.LeafSaver_Kotlin.controllers.drug
 
+import com.github.jaksa97.LeafSaver_Kotlin.exceptions.BadRequestException
 import com.github.jaksa97.LeafSaver_Kotlin.exceptions.ResourceNotFoundException
 import com.github.jaksa97.LeafSaver_Kotlin.exceptions.UniqueViolationException
 import com.github.jaksa97.LeafSaver_Kotlin.models.dtos.drug.DrugDto
@@ -43,12 +44,13 @@ interface DrugRestController {
     @PostMapping
     @Operation(summary = "Create a new drug", description = "Creates a new drug")
     @ApiResponse(responseCode = "201", description = "Drug created successfully")
+    @ApiResponse(responseCode = "400", description = "All params all required")
     @ApiResponse(responseCode = "404", description = "Producer not found")
     @ApiResponse(responseCode = "409", description = "Drug already exists")
-    @Throws(UniqueViolationException::class, ResourceNotFoundException::class)
+    @Throws(UniqueViolationException::class, ResourceNotFoundException::class, BadRequestException::class)
     fun saveDrug(@RequestBody drugSaveDto: DrugSaveDto): DrugDto
 
-    @PutMapping("/{id}")
+    @PatchMapping("/{id}")
     @Operation(summary = "Update a drug with ID", description = "Update an existing drug")
     @ApiResponse(responseCode = "200", description = "Drug updated successfully")
     @ApiResponse(responseCode = "404", description = "Drug not found")

@@ -6,7 +6,11 @@ import lombok.Value
 @Value
 @Builder
 data class DrugSaveDto(
-    var name: String,
-    var producerId: Int,
-    var description: String
+    var name: String? = null,
+    var producerId: Int? = null,
+    var description: String? = null
 )
+
+fun DrugSaveDto.isPopulate(): Boolean {
+    return name != null && producerId != null && description != null
+}
