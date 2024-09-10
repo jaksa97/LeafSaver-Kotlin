@@ -1,5 +1,6 @@
 package com.github.jaksa97.LeafSaver_Kotlin.services
 
+import com.github.jaksa97.LeafSaver_Kotlin.exceptions.BadRequestException
 import com.github.jaksa97.LeafSaver_Kotlin.exceptions.ErrorInfo
 import com.github.jaksa97.LeafSaver_Kotlin.exceptions.ResourceNotFoundException
 import com.github.jaksa97.LeafSaver_Kotlin.exceptions.UniqueViolationException
@@ -46,11 +47,15 @@ class UserService(
         return _userMapper.toDto(userEntity)
     }
 
-    @Throws(UniqueViolationException::class)
+    @Throws(UniqueViolationException::class, BadRequestException::class)
     fun save(
         userSaveDto: UserSaveDto
     ): UserDto {
-        if (_userRepository.findByEmail(userSaveDto.email).isPresent) {
+        if (!userSaveDto.isPopulate()) {
+            throw BadRequestException("All params are required")
+        }
+
+        if (_userRepository.findByEmail(userSaveDto.email!!).isPresent) {
             throw UniqueViolationException(ErrorInfo.ResourceType.USER, "'email' already exists")
         }
 
@@ -66,16 +71,29 @@ class UserService(
             ResourceNotFoundException(ErrorInfo.ResourceType.USER)
         }
 
-        if (originalUserEntity.email != updateUser.email && _userRepository.findByEmail(updateUser.email).isPresent) {
-            throw UniqueViolationException(ErrorInfo.ResourceType.USER, "'email' already exists")
+        updateUser.firstName?.let {
+            originalUserEntity.firstName = it
         }
 
-        val userEntity = _userMapper.toEntity(updateUser)
-        userEntity.id = id
+        updateUser.lastName?.let {
+            originalUserEntity.lastName = it
+        }
 
-        _userRepository.save(userEntity)
+        updateUser.email?.let {
+            if (originalUserEntity.email != updateUser.email && _userRepository.findByEmail(updateUser.email).isPresent) {
+                throw UniqueViolationException(ErrorInfo.ResourceType.USER, "'email' already exists")
+            }
 
-        return _userMapper.toDto(userEntity)
+            originalUserEntity.email = it
+        }
+
+        updateUser.role?.let {
+            originalUserEntity.role = it
+        }
+
+        _userRepository.save(originalUserEntity)
+
+        return _userMapper.toDto(originalUserEntity)
     }
 
     @Throws(ResourceNotFoundException::class)

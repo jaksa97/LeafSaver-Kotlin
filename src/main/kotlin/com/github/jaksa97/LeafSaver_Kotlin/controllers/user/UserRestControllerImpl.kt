@@ -1,5 +1,6 @@
 package com.github.jaksa97.LeafSaver_Kotlin.controllers.user
 
+import com.github.jaksa97.LeafSaver_Kotlin.exceptions.BadRequestException
 import com.github.jaksa97.LeafSaver_Kotlin.exceptions.ResourceNotFoundException
 import com.github.jaksa97.LeafSaver_Kotlin.exceptions.UniqueViolationException
 import com.github.jaksa97.LeafSaver_Kotlin.models.dtos.user.UserDto
@@ -45,7 +46,7 @@ class UserRestControllerImpl(
         return _userService.getAllByRole(role)
     }
 
-    @Throws(UniqueViolationException::class)
+    @Throws(UniqueViolationException::class, BadRequestException::class)
     override fun saveUser(userSaveDto: UserSaveDto): UserDto {
         return _userService.save(userSaveDto)
     }

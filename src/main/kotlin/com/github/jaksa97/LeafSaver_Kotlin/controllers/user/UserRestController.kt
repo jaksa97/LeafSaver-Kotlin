@@ -1,5 +1,6 @@
 package com.github.jaksa97.LeafSaver_Kotlin.controllers.user
 
+import com.github.jaksa97.LeafSaver_Kotlin.exceptions.BadRequestException
 import com.github.jaksa97.LeafSaver_Kotlin.exceptions.ResourceNotFoundException
 import com.github.jaksa97.LeafSaver_Kotlin.exceptions.UniqueViolationException
 import com.github.jaksa97.LeafSaver_Kotlin.models.dtos.user.UserDto
@@ -52,15 +53,16 @@ interface UserRestController {
     @PostMapping
     @Operation(summary = "Create a new user", description = "Create a new user")
     @ApiResponse(responseCode = "201", description = "User created successfully")
-    @ApiResponse(responseCode = "400", description = "User already exists")
-    @Throws(UniqueViolationException::class)
+    @ApiResponse(responseCode = "400", description = "All params are required")
+    @ApiResponse(responseCode = "409", description = "User already exists")
+    @Throws(UniqueViolationException::class, BadRequestException::class)
     fun saveUser(@RequestBody userSaveDto: UserSaveDto): UserDto
 
-    @PutMapping("/{id}")
+    @PatchMapping("/{id}")
     @Operation(summary = "Update a user with ID", description = "Update an existing user")
     @ApiResponse(responseCode = "200", description = "User updated successfully")
-    @ApiResponse(responseCode = "400", description = "User already exists")
     @ApiResponse(responseCode = "404", description = "User not found")
+    @ApiResponse(responseCode = "409", description = "User already exists")
     @Throws(UniqueViolationException::class, ResourceNotFoundException::class)
     fun updateUser(@PathVariable id: Int, @RequestBody updateUserDto: UserSaveDto): UserDto
 

@@ -36,15 +36,15 @@ interface DiseaseRestController {
     @PostMapping
     @Operation(summary = "Create a new disease", description = "Create a new disease")
     @ApiResponse(responseCode = "201", description = "Disease created successfully")
-    @ApiResponse(responseCode = "400", description = "Disease already exists")
+    @ApiResponse(responseCode = "409", description = "Disease already exists")
     @Throws(UniqueViolationException::class)
     fun saveDisease(@RequestBody diseaseSaveDto: DiseaseSaveDto): DiseaseDto
 
     @PutMapping("/{id}")
     @Operation(summary = "Update a disease with ID", description = "Update an existing disease")
     @ApiResponse(responseCode = "200", description = "Disease updated successfully")
-    @ApiResponse(responseCode = "400", description = "Disease already exists")
     @ApiResponse(responseCode = "404", description = "Disease not found")
+    @ApiResponse(responseCode = "409", description = "Disease already exists")
     @Throws(UniqueViolationException::class, ResourceNotFoundException::class)
     fun updateDisease(@PathVariable id: Int, @RequestBody updateDisease: DiseaseSaveDto): DiseaseDto
 

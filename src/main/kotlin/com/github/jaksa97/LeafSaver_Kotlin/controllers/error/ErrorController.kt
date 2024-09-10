@@ -34,7 +34,7 @@ class ErrorController {
     }
 
     @ExceptionHandler(UniqueViolationException::class)
-    @ResponseStatus(code = HttpStatus.BAD_REQUEST)
+    @ResponseStatus(code = HttpStatus.CONFLICT)
     fun handleUniqueViolationException(e: UniqueViolationException): ErrorInfo {
         return ErrorInfo(
             errorType = ErrorInfo.ErrorType.UNIQUE_VIOLATION,

@@ -43,17 +43,17 @@ interface DrugRestController {
     @PostMapping
     @Operation(summary = "Create a new drug", description = "Creates a new drug")
     @ApiResponse(responseCode = "201", description = "Drug created successfully")
-    @ApiResponse(responseCode = "400", description = "Drug already exists")
     @ApiResponse(responseCode = "404", description = "Producer not found")
+    @ApiResponse(responseCode = "409", description = "Drug already exists")
     @Throws(UniqueViolationException::class, ResourceNotFoundException::class)
     fun saveDrug(@RequestBody drugSaveDto: DrugSaveDto): DrugDto
 
     @PutMapping("/{id}")
     @Operation(summary = "Update a drug with ID", description = "Update an existing drug")
     @ApiResponse(responseCode = "200", description = "Drug updated successfully")
-    @ApiResponse(responseCode = "400", description = "Drug already exists")
     @ApiResponse(responseCode = "404", description = "Drug not found")
     @ApiResponse(responseCode = "404", description = "Producer not found")
+    @ApiResponse(responseCode = "409", description = "Drug already exists")
     @Throws(ResourceNotFoundException::class, UniqueViolationException::class)
     fun updateDrug(@PathVariable id: Int, @RequestBody drugSaveDto: DrugSaveDto): DrugDto
 

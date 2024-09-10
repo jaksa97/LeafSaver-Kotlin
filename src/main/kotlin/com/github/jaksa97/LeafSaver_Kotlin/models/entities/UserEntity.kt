@@ -29,17 +29,17 @@ data class UserEntity(
     var lastName: String,
 
     @Column(nullable = false, unique = true)
-    val email: String,
+    var email: String,
 
     @Column(nullable = false)
     private val password: String,
 
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
-    val role: UserRoles,
+    var role: UserRoles,
 
     @OneToMany(mappedBy = "user")
-    val tokens: List<Token> = emptyList()
+    var tokens: List<Token> = emptyList()
 
 ): UserDetails {
     override fun getAuthorities(): MutableCollection<out GrantedAuthority> {

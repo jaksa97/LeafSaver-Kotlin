@@ -7,9 +7,14 @@ import lombok.Value
 @Value
 @Builder
 data class UserSaveDto(
-    val firstName: String,
-    val lastName: String,
-    val email: String,
-    val password: String,
-    val role: UserRoles
-)
+    val firstName: String? = null,
+    val lastName: String? = null,
+    val email: String? = null,
+    val password: String? = null,
+    val role: UserRoles? = null
+) {
+
+    fun isPopulate(): Boolean {
+        return firstName != null && lastName != null && email != null && password != null && role != null
+    }
+}

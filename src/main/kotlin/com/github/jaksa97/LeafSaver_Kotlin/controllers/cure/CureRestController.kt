@@ -49,19 +49,19 @@ interface CureRestController {
     @PostMapping
     @Operation(summary = "Create a new cure", description = "Creates a new cure")
     @ApiResponse(responseCode = "201", description = "Cure created successfully")
-    @ApiResponse(responseCode = "400", description = "Cure already exists")
     @ApiResponse(responseCode = "404", description = "Drug not found")
     @ApiResponse(responseCode = "404", description = "Disease not found")
+    @ApiResponse(responseCode = "409", description = "Cure already exists")
     @Throws(UniqueViolationException::class, ResourceNotFoundException::class)
     fun saveCure(@RequestBody cureSaveDto: CureSaveDto): CureDto
 
     @PutMapping("/{id}")
     @Operation(summary = "Update a cure with ID", description = "Update an existing cure")
     @ApiResponse(responseCode = "200", description = "Cure updated successfully")
-    @ApiResponse(responseCode = "400", description = "Cure already exists")
     @ApiResponse(responseCode = "404", description = "Cure not found")
     @ApiResponse(responseCode = "404", description = "Drug not found")
     @ApiResponse(responseCode = "404", description = "Disease not found")
+    @ApiResponse(responseCode = "409", description = "Cure already exists")
     @Throws(ResourceNotFoundException::class, UniqueViolationException::class)
     fun updateCure(@PathVariable id: Int, @RequestBody updateCureSaveDto: CureSaveDto): CureDto
 
