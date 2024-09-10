@@ -3,13 +3,13 @@ package com.github.jaksa97.LeafSaver_Kotlin.controllers.auth
 import com.github.jaksa97.LeafSaver_Kotlin.exceptions.ResourceNotFoundException
 import com.github.jaksa97.LeafSaver_Kotlin.models.auth.AuthResponse
 import com.github.jaksa97.LeafSaver_Kotlin.models.auth.LoginRequest
+import com.github.jaksa97.LeafSaver_Kotlin.models.auth.RefreshTokenRequest
 import com.github.jaksa97.LeafSaver_Kotlin.models.auth.RegisterRequest
 import com.github.jaksa97.LeafSaver_Kotlin.services.jwt.AuthService
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import lombok.RequiredArgsConstructor
-import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
@@ -31,8 +31,9 @@ class AuthControllerImpl(
 
     }
 
-    override fun refreshToken(request: HttpServletRequest, response: HttpServletResponse): ResponseEntity<Any> {
-        return _authService.refreshToken(request, response)
+    @Throws(ResourceNotFoundException::class, Exception::class)
+    override fun refreshToken(request: RefreshTokenRequest): AuthResponse {
+        return _authService.refreshToken(request)
     }
 
 }

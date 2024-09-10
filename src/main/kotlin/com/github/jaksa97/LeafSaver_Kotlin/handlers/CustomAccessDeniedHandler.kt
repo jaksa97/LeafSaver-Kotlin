@@ -1,4 +1,4 @@
-package com.github.jaksa97.LeafSaver_Kotlin.configuration
+package com.github.jaksa97.LeafSaver_Kotlin.handlers
 
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse

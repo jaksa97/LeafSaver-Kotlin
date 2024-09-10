@@ -1,6 +1,6 @@
 package com.github.jaksa97.LeafSaver_Kotlin.services.jwt
 
-import com.github.jaksa97.LeafSaver_Kotlin.configuration.JwtProperties
+import com.github.jaksa97.LeafSaver_Kotlin.models.auth.JwtProperties
 import com.github.jaksa97.LeafSaver_Kotlin.models.entities.UserEntity
 import com.github.jaksa97.LeafSaver_Kotlin.repositories.TokenRepository
 import io.jsonwebtoken.Claims

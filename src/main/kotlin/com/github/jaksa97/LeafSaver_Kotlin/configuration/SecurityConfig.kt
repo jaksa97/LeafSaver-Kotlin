@@ -1,6 +1,8 @@
 package com.github.jaksa97.LeafSaver_Kotlin.configuration
 
 import com.github.jaksa97.LeafSaver_Kotlin.filters.JwtAuthFilter
+import com.github.jaksa97.LeafSaver_Kotlin.handlers.CustomAccessDeniedHandler
+import com.github.jaksa97.LeafSaver_Kotlin.handlers.CustomLogoutHandler
 import com.github.jaksa97.LeafSaver_Kotlin.services.jwt.CustomUserDetailsService
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration

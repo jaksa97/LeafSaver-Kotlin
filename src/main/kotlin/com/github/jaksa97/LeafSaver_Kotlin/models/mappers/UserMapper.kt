@@ -18,7 +18,5 @@ interface UserMapper {
         )
     }
 
-    //fun toEntity(userDto: UserDto): UserEntity
-
     fun toEntity(userSaveDto: UserSaveDto): UserEntity
 }

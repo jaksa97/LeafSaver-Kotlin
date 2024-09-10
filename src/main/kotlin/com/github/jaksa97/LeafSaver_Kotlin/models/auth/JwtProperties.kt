@@ -1,4 +1,4 @@
-package com.github.jaksa97.LeafSaver_Kotlin.configuration
+package com.github.jaksa97.LeafSaver_Kotlin.models.auth
 
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component

@@ -2,20 +2,12 @@ package com.github.jaksa97.LeafSaver_Kotlin.services.jwt
 
 import com.github.jaksa97.LeafSaver_Kotlin.exceptions.ErrorInfo
 import com.github.jaksa97.LeafSaver_Kotlin.exceptions.ResourceNotFoundException
-import com.github.jaksa97.LeafSaver_Kotlin.models.auth.AuthResponse
-import com.github.jaksa97.LeafSaver_Kotlin.models.auth.LoginRequest
-import com.github.jaksa97.LeafSaver_Kotlin.models.auth.RegisterRequest
-import com.github.jaksa97.LeafSaver_Kotlin.models.auth.Token
+import com.github.jaksa97.LeafSaver_Kotlin.models.auth.*
 import com.github.jaksa97.LeafSaver_Kotlin.models.dtos.user.UserSaveDto
 import com.github.jaksa97.LeafSaver_Kotlin.models.entities.UserEntity
 import com.github.jaksa97.LeafSaver_Kotlin.models.mappers.UserMapper
 import com.github.jaksa97.LeafSaver_Kotlin.repositories.TokenRepository
 import com.github.jaksa97.LeafSaver_Kotlin.repositories.UserRepository
-import jakarta.servlet.http.HttpServletRequest
-import jakarta.servlet.http.HttpServletResponse
-import org.springframework.http.HttpHeaders
-import org.springframework.http.HttpStatus
-import org.springframework.http.ResponseEntity
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -97,16 +89,9 @@ class AuthService(
     }
 
 
-    //Refactor to pass refreshToken as method parameter
-    @Throws(ResourceNotFoundException::class)
-    fun refreshToken(request: HttpServletRequest, response: HttpServletResponse): ResponseEntity<Any> {
-        val authHeader = request.getHeader(HttpHeaders.AUTHORIZATION)
-
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            return ResponseEntity(HttpStatus.UNAUTHORIZED)
-        }
-
-        val token = authHeader.substringAfter("Bearer ")
+    @Throws(ResourceNotFoundException::class, Exception::class)
+    fun refreshToken(request: RefreshTokenRequest): AuthResponse {
+        val token = request.refreshToken
 
         val email = _jwtService.extractEmail(token)
 
@@ -114,17 +99,17 @@ class AuthService(
             ResourceNotFoundException(ErrorInfo.ResourceType.USER)
         }
 
-        if (_jwtService.isRefreshValid(token, user)) {
-            val accessToken = _jwtService.generateAccessToken(user)
-            val refreshToken = _jwtService.generateRefreshToken(user)
-
-            revokeAllTokensByUser(user)
-
-            saveUserToken(accessToken, refreshToken, user)
-
-            return ResponseEntity(AuthResponse(accessToken, refreshToken), HttpStatus.OK)
+        if (!_jwtService.isRefreshValid(token, user)) {
+            throw Exception("Invalid refresh token")
         }
 
-        return ResponseEntity(HttpStatus.UNAUTHORIZED)
+        val accessToken = _jwtService.generateAccessToken(user)
+        val refreshToken = _jwtService.generateRefreshToken(user)
+
+        revokeAllTokensByUser(user)
+
+        saveUserToken(accessToken, refreshToken, user)
+
+        return AuthResponse(accessToken, refreshToken)
     }
 }
