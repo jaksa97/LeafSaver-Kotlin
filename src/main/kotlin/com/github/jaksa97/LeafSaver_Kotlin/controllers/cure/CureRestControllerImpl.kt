@@ -1,5 +1,6 @@
 package com.github.jaksa97.LeafSaver_Kotlin.controllers.cure
 
+import com.github.jaksa97.LeafSaver_Kotlin.exceptions.BadRequestException
 import com.github.jaksa97.LeafSaver_Kotlin.exceptions.ResourceNotFoundException
 import com.github.jaksa97.LeafSaver_Kotlin.exceptions.UniqueViolationException
 import com.github.jaksa97.LeafSaver_Kotlin.models.dtos.cure.CureDto
@@ -49,7 +50,7 @@ class CureRestControllerImpl(
         return _cureService.getOne(id)
     }
 
-    @Throws(ResourceNotFoundException::class, UniqueViolationException::class)
+    @Throws(ResourceNotFoundException::class, UniqueViolationException::class, BadRequestException::class)
     override fun saveCure(
         cureSaveDto: CureSaveDto
     ): CureDto {

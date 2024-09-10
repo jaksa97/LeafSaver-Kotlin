@@ -1,5 +1,6 @@
 package com.github.jaksa97.LeafSaver_Kotlin.controllers.cure
 
+import com.github.jaksa97.LeafSaver_Kotlin.exceptions.BadRequestException
 import com.github.jaksa97.LeafSaver_Kotlin.exceptions.ResourceNotFoundException
 import com.github.jaksa97.LeafSaver_Kotlin.exceptions.UniqueViolationException
 import com.github.jaksa97.LeafSaver_Kotlin.models.dtos.cure.CureDto
@@ -49,13 +50,14 @@ interface CureRestController {
     @PostMapping
     @Operation(summary = "Create a new cure", description = "Creates a new cure")
     @ApiResponse(responseCode = "201", description = "Cure created successfully")
+    @ApiResponse(responseCode = "400", description = "All params all required")
     @ApiResponse(responseCode = "404", description = "Drug not found")
     @ApiResponse(responseCode = "404", description = "Disease not found")
     @ApiResponse(responseCode = "409", description = "Cure already exists")
-    @Throws(UniqueViolationException::class, ResourceNotFoundException::class)
+    @Throws(UniqueViolationException::class, ResourceNotFoundException::class, BadRequestException::class)
     fun saveCure(@RequestBody cureSaveDto: CureSaveDto): CureDto
 
-    @PutMapping("/{id}")
+    @PatchMapping("/{id}")
     @Operation(summary = "Update a cure with ID", description = "Update an existing cure")
     @ApiResponse(responseCode = "200", description = "Cure updated successfully")
     @ApiResponse(responseCode = "404", description = "Cure not found")

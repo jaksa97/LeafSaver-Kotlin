@@ -1,10 +1,12 @@
 package com.github.jaksa97.LeafSaver_Kotlin.services
 
+import com.github.jaksa97.LeafSaver_Kotlin.exceptions.BadRequestException
 import com.github.jaksa97.LeafSaver_Kotlin.exceptions.ErrorInfo
 import com.github.jaksa97.LeafSaver_Kotlin.exceptions.ResourceNotFoundException
 import com.github.jaksa97.LeafSaver_Kotlin.exceptions.UniqueViolationException
 import com.github.jaksa97.LeafSaver_Kotlin.models.dtos.cure.CureDto
 import com.github.jaksa97.LeafSaver_Kotlin.models.dtos.cure.CureSaveDto
+import com.github.jaksa97.LeafSaver_Kotlin.models.dtos.cure.isPopulate
 import com.github.jaksa97.LeafSaver_Kotlin.models.entities.CureEntity
 import com.github.jaksa97.LeafSaver_Kotlin.models.mappers.CureMapper
 import com.github.jaksa97.LeafSaver_Kotlin.repositories.CureRepository
@@ -60,15 +62,20 @@ class CureService(
         return _cureRepository.findAllByDiseaseId(diseaseId).map(_cureMapper::toDto)
     }
 
-    @Throws(ResourceNotFoundException::class, UniqueViolationException::class)
+    @Throws(ResourceNotFoundException::class, UniqueViolationException::class, BadRequestException::class)
     fun save(
         cureSaveDto: CureSaveDto
     ): CureDto {
-        val drugEntity = _drugRepository.findById(cureSaveDto.drugId).orElseThrow {
+
+        if (!cureSaveDto.isPopulate()) {
+            throw BadRequestException("All params are required")
+        }
+
+        val drugEntity = _drugRepository.findById(cureSaveDto.drugId!!).orElseThrow {
                 ResourceNotFoundException(ErrorInfo.ResourceType.DRUG, ("Drug with id ${cureSaveDto.drugId} don't exist"))
             }
 
-        val diseaseEntity = _diseaseRepository.findById(cureSaveDto.diseaseId).orElseThrow {
+        val diseaseEntity = _diseaseRepository.findById(cureSaveDto.diseaseId!!).orElseThrow {
                 ResourceNotFoundException(ErrorInfo.ResourceType.DISEASE, ("Disease with id ${cureSaveDto.diseaseId} don't exist"))
             }
 
@@ -93,26 +100,33 @@ class CureService(
             ResourceNotFoundException(ErrorInfo.ResourceType.CURE)
         }
 
-        if (originalCureEntity.disease.id != updatedCure.diseaseId && originalCureEntity.drug.id != updatedCure.drugId && checkCure(updatedCure)) {
+        updatedCure.drugId?.let {
+            val drugEntity = _drugRepository.findById(it).orElseThrow {
+                ResourceNotFoundException(ErrorInfo.ResourceType.DRUG, ("Drug with id $it don't exist"))
+            }
+
+            originalCureEntity.drug = drugEntity
+        }
+
+        updatedCure.diseaseId?.let {
+            val diseaseEntity = _diseaseRepository.findById(it).orElseThrow {
+                ResourceNotFoundException(ErrorInfo.ResourceType.DISEASE, ("Disease with id $it don't exist"))
+            }
+
+            originalCureEntity.disease = diseaseEntity
+        }
+
+        updatedCure.instruction?.let {
+            originalCureEntity.instruction = it
+        }
+
+        if (originalCureEntity.disease.id != updatedCure.diseaseId && originalCureEntity.drug.id != updatedCure.drugId && checkCure(CureSaveDto(drugId = originalCureEntity.drug.id, diseaseId = originalCureEntity.disease.id))) {
             throw UniqueViolationException(ErrorInfo.ResourceType.CURE, "Cure already exists")
         }
 
-        val drugEntity = _drugRepository.findById(updatedCure.drugId).orElseThrow {
-            ResourceNotFoundException(ErrorInfo.ResourceType.DRUG, ("Drug with id ${updatedCure.drugId} don't exist"))
-        }
+        _cureRepository.save(originalCureEntity)
 
-        val diseaseEntity = _diseaseRepository.findById(updatedCure.diseaseId).orElseThrow {
-            ResourceNotFoundException(ErrorInfo.ResourceType.DISEASE, ("Disease with id ${updatedCure.diseaseId} don't exist"))
-        }
-
-        val cureEntity = _cureMapper.toEntity(updatedCure)
-        cureEntity.drug = drugEntity
-        cureEntity.disease = diseaseEntity
-        cureEntity.id = originalCureEntity.id
-
-        _cureRepository.save(cureEntity)
-
-        return _cureMapper.toDto(cureEntity)
+        return _cureMapper.toDto(originalCureEntity)
     }
 
     @Throws(ResourceNotFoundException::class)
@@ -129,11 +143,11 @@ class CureService(
     private fun checkCure(
         cureSaveDto: CureSaveDto
     ): Boolean {
-        val cureEntitiesByDrugId = _cureRepository.findAllByDrugId(cureSaveDto.drugId)
+        val cureEntitiesByDrugId = _cureRepository.findAllByDrugId(cureSaveDto.drugId!!)
 
         if (cureEntitiesByDrugId.isNotEmpty()) {
             for (cure: CureEntity in cureEntitiesByDrugId) {
-                if (cure.disease.id == cureSaveDto.diseaseId) {
+                if (cure.disease.id == cureSaveDto.diseaseId!!) {
                     return true
                 }
             }

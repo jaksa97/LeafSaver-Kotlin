@@ -1,5 +1,6 @@
 package com.github.jaksa97.LeafSaver_Kotlin.controllers.drug
 
+import com.github.jaksa97.LeafSaver_Kotlin.exceptions.BadRequestException
 import com.github.jaksa97.LeafSaver_Kotlin.exceptions.ResourceNotFoundException
 import com.github.jaksa97.LeafSaver_Kotlin.exceptions.UniqueViolationException
 import com.github.jaksa97.LeafSaver_Kotlin.models.dtos.drug.DrugDto
@@ -39,7 +40,7 @@ class DrugRestControllerImpl(
         return _drugService.getOne(id)
     }
 
-    @Throws(UniqueViolationException::class, ResourceNotFoundException::class)
+    @Throws(UniqueViolationException::class, ResourceNotFoundException::class, BadRequestException::class)
     override fun saveDrug(drugSaveDto: DrugSaveDto): DrugDto {
         return _drugService.save(drugSaveDto)
     }
