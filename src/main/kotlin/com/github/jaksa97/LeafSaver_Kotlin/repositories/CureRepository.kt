@@ -16,4 +16,6 @@ interface CureRepository: JpaRepository<CureEntity, Int> {
     fun deleteAllByDrug(drugEntity: DrugEntity)
 
     fun deleteAllByDisease(diseaseEntity: DiseaseEntity)
+
+    fun findByDrugIdAndDiseaseId(drugId: Int, diseaseId: Int): CureEntity?
 }

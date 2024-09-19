@@ -116,12 +116,17 @@ class CureService(
             originalCureEntity.disease = diseaseEntity
         }
 
-        updatedCure.instruction?.let {
-            originalCureEntity.instruction = it
+        val existingCure = _cureRepository.findByDrugIdAndDiseaseId(
+            updatedCure.drugId ?: originalCureEntity.drug.id,
+            updatedCure.diseaseId ?: originalCureEntity.disease.id
+        )
+
+        if (existingCure != null && existingCure.id != originalCureEntity.id) {
+            throw UniqueViolationException(ErrorInfo.ResourceType.CURE, "Cure already exists")
         }
 
-        if (originalCureEntity.disease.id != updatedCure.diseaseId && originalCureEntity.drug.id != updatedCure.drugId && checkCure(CureSaveDto(drugId = originalCureEntity.drug.id, diseaseId = originalCureEntity.disease.id))) {
-            throw UniqueViolationException(ErrorInfo.ResourceType.CURE, "Cure already exists")
+        updatedCure.instruction?.let {
+            originalCureEntity.instruction = it
         }
 
         _cureRepository.save(originalCureEntity)
